@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('ci')->unique();
-            $table->string('genero');
+            $table->string('genero')->nullable();
             //creado campos adicionales para el proyecto
-            $table->string('apellido');
+            $table->string('apellido')->nullable();
             $table->integer('celular')->nullable();
-            $table->string('direccion');
-            $table->date('fecha_nacimiento');
+            $table->string('direccion')->nullable();
+            $table->date('fecha_nacimiento')->nullable();
             $table->string('email')->unique();
             $table->string('password');
             $table->timestamp('email_verified_at')->nullable();
