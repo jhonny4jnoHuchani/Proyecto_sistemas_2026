@@ -300,79 +300,40 @@ return [
 //AQUI VAMOS A TRABAJAR NOSOTROS 
     'menu' => [
         // Navbar items:
-        [
-            'type' => 'navbar-search',
-            'text' => 'search',
-            'topnav_right' => true,
-        ],
+
         [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
 
         // Sidebar items:
+        ['header' => 'Gestion de usuarios'],
         [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
-        ],
-        [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
-        ],
-        [
-            'text' => 'pages',
-            'url' => 'admin/pages',
+            'text' => 'Estudiantes',
+            'url' => 'estudiantes/listar',
             'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
         ],
-        ['header' => 'account_settings'],
         [
-            'text' => 'profile',
-            'url' => 'admin/settings',
+            'text' => 'Docentes',
+            'url' => 'docentes/listar',
             'icon' => 'fas fa-fw fa-user',
         ],
         [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
+            'text' => 'Cursos',
+            'url' => 'cursos/listar',
             'icon' => 'fas fa-fw fa-lock',
         ],
         [
-            'text' => 'multilevel',
+            'text' => 'gestion academica',
             'icon' => 'fas fa-fw fa-share',
             'submenu' => [
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'notas',
+                    'url' => 'notas/listar',
                 ],
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'materias',
+                    'url' => 'materias/listar',
                 ],
             ],
         ],
