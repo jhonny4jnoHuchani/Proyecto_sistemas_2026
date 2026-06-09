@@ -23,6 +23,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $user=12345;
+        $madarinas=12345+$user;
+        return view('home', compact('user', 'madarinas'));
     }
 }

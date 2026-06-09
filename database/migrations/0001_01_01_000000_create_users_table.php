@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('ci')->unique()->nullable();
+            $table->string('ci', 20)->unique()->nullable();
             $table->string('genero')->nullable();
             //creado campos adicionales para el proyecto
             $table->string('apellido')->nullable();
-            $table->integer('celular')->nullable();
+            $table->string('celular', 15)->nullable();
             $table->string('direccion')->nullable();
             $table->date('fecha_nacimiento')->nullable();
             $table->string('email')->unique();
@@ -26,6 +26,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            
+            // Campo para eliminación lógica
+            $table->boolean('estado')->default(true); // true = activo, false = eliminado
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

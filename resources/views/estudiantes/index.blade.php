@@ -1,104 +1,128 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Estudiantes')
 
 @section('content_header')
-    <h1>Lista estudiantes</h1>
+    <h1>Lista de Estudiantes</h1>
 @stop
 
 @section('content')
-<!-- Botones para abrir modal con diferentes datos -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#form_estudiante">
+
+{{-- Alertas --}}
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="fas fa-check-circle"></i> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show">
+        <i class="fas fa-exclamation-triangle"></i> {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+
+{{-- Botón crear --}}
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalCrear">
     <i class="fas fa-user-plus"></i> Crear Estudiante
 </button>
 
-<!-- Modal -->
-<div class="modal fade" id="form_estudiante" tabindex="-1" aria-labelledby="form_estudianteLabel" aria-hidden="true">
+{{-- ===================== MODAL CREAR ===================== --}}
+<div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h1 class="modal-title fs-5" id="form_estudianteLabel">
-                    <i class="fas fa-user-graduate"></i> Registrar Nuevo Estudiante
-                </h1>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title"><i class="fas fa-user-graduate"></i> Registrar Nuevo Estudiante</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form id="formCrearEstudiante" action="{{ route('estudiantes.store') }}" method="POST">
+            <form action="{{ route('estudiantes.store') }}" method="POST">
                 @csrf
+                <input type="hidden" name="_form" value="crear">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="nombre" class="col-form-label">
-                                <i class="fas fa-user"></i> Nombre <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" required>
-                            <div class="invalid-feedback">El nombre es requerido</div>
+                            <label class="col-form-label"><i class="fas fa-user"></i> Nombre <span class="text-danger">*</span></label>
+                            <input type="text" name="nombre" 
+                                class="form-control @error('nombre') is-invalid @enderror" 
+                                value="{{ old('nombre') }}">
+                            @error('nombre')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        
                         <div class="col-md-6 mb-3">
-                            <label for="apellido" class="col-form-label">
-                                <i class="fas fa-user"></i> Apellido <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" class="form-control" id="apellido" name="apellido" required>
-                            <div class="invalid-feedback">El apellido es requerido</div>
+                            <label class="col-form-label"><i class="fas fa-user"></i> Apellido <span class="text-danger">*</span></label>
+                            <input type="text" name="apellido" 
+                                class="form-control @error('apellido') is-invalid @enderror" 
+                                value="{{ old('apellido') }}">
+                            @error('apellido')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="ci" class="col-form-label">
-                                <i class="fas fa-id-card"></i> CI <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" class="form-control" id="ci" name="ci" required>
-                            <div class="invalid-feedback">El CI es requerido</div>
+                            <label class="col-form-label"><i class="fas fa-id-card"></i> CI <span class="text-danger">*</span></label>
+                            <input type="text" name="ci" 
+                                class="form-control @error('ci') is-invalid @enderror" 
+                                value="{{ old('ci') }}">
+                            @error('ci')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        
                         <div class="col-md-4 mb-3">
-                            <label for="rude" class="col-form-label">
-                                <i class="fas fa-qrcode"></i> RUDE
-                            </label>
-                            <input type="text" class="form-control" id="rude" name="rude">
+                            <label class="col-form-label"><i class="fas fa-qrcode"></i> RUDE</label>
+                            <input type="text" name="rude" 
+                                class="form-control @error('rude') is-invalid @enderror" 
+                                value="{{ old('rude') }}">
+                            @error('rude')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        
                         <div class="col-md-4 mb-3">
-                            <label for="celular" class="col-form-label">
-                                <i class="fas fa-phone"></i> Celular
-                            </label>
-                            <input type="tel" class="form-control" id="celular" name="celular" pattern="[0-9]{8}">
-                            <small class="form-text text-muted">Formato: 8 dígitos</small>
+                            <label class="col-form-label"><i class="fas fa-phone"></i> Celular</label>
+                            <input type="tel" name="celular" 
+                                class="form-control @error('celular') is-invalid @enderror" 
+                                value="{{ old('celular') }}" pattern="[0-9]{8}">
+                            @error('celular')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="text-muted">Formato: 8 dígitos</small>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="genero" class="col-form-label">
-                                <i class="fas fa-venus-mars"></i> Género <span class="text-danger">*</span>
-                            </label>
-                            <select class="form-select" id="genero" name="genero" required>
+                            <label class="col-form-label"><i class="fas fa-venus-mars"></i> Género <span class="text-danger">*</span></label>
+                            <select name="genero" class="form-select @error('genero') is-invalid @enderror">
                                 <option value="">Seleccione género</option>
-                                <option value="Masculino">Masculino</option>
-                                <option value="Femenino">Femenino</option>
-                                <option value="Otro">Otro</option>
+                                <option value="Masculino" {{ old('genero') == 'Masculino' ? 'selected' : '' }}>Masculino</option>
+                                <option value="Femenino"  {{ old('genero') == 'Femenino'  ? 'selected' : '' }}>Femenino</option>
+                                <option value="Otro"      {{ old('genero') == 'Otro'      ? 'selected' : '' }}>Otro</option>
                             </select>
-                            <div class="invalid-feedback">Seleccione un género</div>
+                            @error('genero')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        
                         <div class="col-md-6 mb-3">
-                            <label for="fecha_nacimiento" class="col-form-label">
-                                <i class="fas fa-calendar-alt"></i> Fecha de Nacimiento
-                            </label>
-                            <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+                            <label class="col-form-label"><i class="fas fa-calendar-alt"></i> Fecha de Nacimiento</label>
+                            <input type="date" name="fecha_nacimiento" 
+                                class="form-control @error('fecha_nacimiento') is-invalid @enderror" 
+                                value="{{ old('fecha_nacimiento') }}">
+                            @error('fecha_nacimiento')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
-
                     <div class="mb-3">
-                        <label for="direccion" class="col-form-label">
-                            <i class="fas fa-map-marker-alt"></i> Dirección
-                        </label>
-                        <textarea class="form-control" id="direccion" name="direccion" rows="2" placeholder="Dirección completa del estudiante"></textarea>
+                        <label class="col-form-label"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                        <textarea name="direccion" rows="2" 
+                            class="form-control @error('direccion') is-invalid @enderror">{{ old('direccion') }}</textarea>
+                        @error('direccion')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
-
-                    <div class="alert alert-info mt-2">
-                        <i class="fas fa-info-circle"></i> Los campos marcados con <span class="text-danger">*</span> son obligatorios.
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Los campos con <span class="text-danger">*</span> son obligatorios.
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -114,136 +138,141 @@
     </div>
 </div>
 
-
-<!-- Tabla de estudiantes -->
-<div class="table-responsive mt-4">
+{{-- ===================== TABLA ===================== --}}
+<div class="table-responsive">
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
-                
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>CI</th>
-                
                 <th>Celular</th>
                 <th>Dirección</th>
                 <th>Fecha Nac.</th>
                 <th>RUDE</th>
-                <th>acciones</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($estudiantes as $estudiante)
             <tr>
-                
                 <td>{{ $estudiante->user->name ?? 'N/A' }}</td>
                 <td>{{ $estudiante->user->apellido ?? 'N/A' }}</td>
                 <td>{{ $estudiante->user->ci ?? 'N/A' }}</td>
-                
                 <td>{{ $estudiante->user->celular ?? 'N/A' }}</td>
                 <td>{{ $estudiante->user->direccion ?? 'N/A' }}</td>
                 <td>{{ $estudiante->user->fecha_nacimiento ?? 'N/A' }}</td>
                 <td>{{ $estudiante->rude ?? 'N/A' }}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editEstudianteModal{{ $estudiante->id }}">
+                    {{-- Botón Editar --}}
+                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" 
+                        data-bs-target="#modalEditar{{ $estudiante->id }}">
                         <i class="fas fa-edit"></i> Editar
                     </button>
 
-                    <!-- Modal de Edición para cada estudiante -->
-                    <div class="modal fade" id="editEstudianteModal{{ $estudiante->id }}" tabindex="-1" aria-labelledby="editEstudianteModalLabel{{ $estudiante->id }}" aria-hidden="true">
+                    {{-- Botón Eliminar --}}
+                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" 
+                        data-bs-target="#modalEliminar{{ $estudiante->id }}">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </button>
+
+                    {{-- ===================== MODAL EDITAR ===================== --}}
+                    <div class="modal fade" id="modalEditar{{ $estudiante->id }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header bg-warning text-dark">
-                                    <h1 class="modal-title fs-5" id="editEstudianteModalLabel{{ $estudiante->id }}">
-                                        <i class="fas fa-user-edit"></i> Editar Estudiante
-                                    </h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <h5 class="modal-title"><i class="fas fa-user-edit"></i> Editar Estudiante</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
-                                <form action="{{ route('estudiantes.update', $estudiante->id) }}" method="POST">
+                                <form action="{{ route('estudiantes.actualizar', $estudiante->id) }}" method="POST">
                                     @csrf
                                     @method('PUT')
+                                    <input type="hidden" name="_form" value="editar">
+                                    <input type="hidden" name="_form_id" value="{{ $estudiante->id }}">
                                     <div class="modal-body">
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
-                                                <label for="nombre{{ $estudiante->id }}" class="col-form-label">
-                                                    <i class="fas fa-user"></i> Nombre <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="text" class="form-control" id="nombre{{ $estudiante->id }}" 
-                                                    name="nombre" value="{{ $estudiante->user->name ?? '' }}" required>
-                                                <div class="invalid-feedback">El nombre es requerido</div>
+                                                <label class="col-form-label"><i class="fas fa-user"></i> Nombre <span class="text-danger">*</span></label>
+                                                <input type="text" name="nombre"
+                                                    class="form-control @error('nombre') is-invalid @enderror"
+                                                    value="{{ old('nombre', $estudiante->user->name ?? '') }}">
+                                                @error('nombre')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
-                                            
                                             <div class="col-md-6 mb-3">
-                                                <label for="apellido{{ $estudiante->id }}" class="col-form-label">
-                                                    <i class="fas fa-user"></i> Apellido <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="text" class="form-control" id="apellido{{ $estudiante->id }}" 
-                                                    name="apellido" value="{{ $estudiante->user->apellido ?? '' }}" required>
-                                                <div class="invalid-feedback">El apellido es requerido</div>
+                                                <label class="col-form-label"><i class="fas fa-user"></i> Apellido <span class="text-danger">*</span></label>
+                                                <input type="text" name="apellido"
+                                                    class="form-control @error('apellido') is-invalid @enderror"
+                                                    value="{{ old('apellido', $estudiante->user->apellido ?? '') }}">
+                                                @error('apellido')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
-
                                         <div class="row">
                                             <div class="col-md-4 mb-3">
-                                                <label for="ci{{ $estudiante->id }}" class="col-form-label">
-                                                    <i class="fas fa-id-card"></i> CI <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="text" class="form-control" id="ci{{ $estudiante->id }}" 
-                                                    name="ci" value="{{ $estudiante->user->ci ?? '' }}" required>
-                                                <div class="invalid-feedback">El CI es requerido</div>
+                                                <label class="col-form-label"><i class="fas fa-id-card"></i> CI <span class="text-danger">*</span></label>
+                                                <input type="text" name="ci"
+                                                    class="form-control @error('ci') is-invalid @enderror"
+                                                    value="{{ old('ci', $estudiante->user->ci ?? '') }}">
+                                                @error('ci')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
-                                            
                                             <div class="col-md-4 mb-3">
-                                                <label for="rude{{ $estudiante->id }}" class="col-form-label">
-                                                    <i class="fas fa-qrcode"></i> RUDE
-                                                </label>
-                                                <input type="text" class="form-control" id="rude{{ $estudiante->id }}" 
-                                                    name="rude" value="{{ $estudiante->rude ?? '' }}">
+                                                <label class="col-form-label"><i class="fas fa-qrcode"></i> RUDE</label>
+                                                <input type="text" name="rude"
+                                                    class="form-control @error('rude') is-invalid @enderror"
+                                                    value="{{ old('rude', $estudiante->rude ?? '') }}">
+                                                @error('rude')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
-                                            
                                             <div class="col-md-4 mb-3">
-                                                <label for="celular{{ $estudiante->id }}" class="col-form-label">
-                                                    <i class="fas fa-phone"></i> Celular
-                                                </label>
-                                                <input type="tel" class="form-control" id="celular{{ $estudiante->id }}" 
-                                                    name="celular" value="{{ $estudiante->user->celular ?? '' }}" pattern="[0-9]{8}">
-                                                <small class="form-text text-muted">Formato: 8 dígitos</small>
+                                                <label class="col-form-label"><i class="fas fa-phone"></i> Celular</label>
+                                                <input type="tel" name="celular"
+                                                    class="form-control @error('celular') is-invalid @enderror"
+                                                    value="{{ old('celular', $estudiante->user->celular ?? '') }}" pattern="[0-9]{8}">
+                                                @error('celular')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                                <small class="text-muted">Formato: 8 dígitos</small>
                                             </div>
                                         </div>
-
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
-                                                <label for="genero{{ $estudiante->id }}" class="col-form-label">
-                                                    <i class="fas fa-venus-mars"></i> Género <span class="text-danger">*</span>
-                                                </label>
-                                                <select class="form-select" id="genero{{ $estudiante->id }}" name="genero" required>
+                                                <label class="col-form-label"><i class="fas fa-venus-mars"></i> Género <span class="text-danger">*</span></label>
+                                                <select name="genero" class="form-select @error('genero') is-invalid @enderror">
                                                     <option value="">Seleccione género</option>
-                                                    <option value="Masculino" {{ ($estudiante->user->genero ?? '') == 'Masculino' ? 'selected' : '' }}>Masculino</option>
-                                                    <option value="Femenino" {{ ($estudiante->user->genero ?? '') == 'Femenino' ? 'selected' : '' }}>Femenino</option>
-                                                    <option value="Otro" {{ ($estudiante->user->genero ?? '') == 'Otro' ? 'selected' : '' }}>Otro</option>
+                                                    <option value="Masculino" {{ old('genero', $estudiante->user->genero ?? '') == 'Masculino' ? 'selected' : '' }}>Masculino</option>
+                                                    <option value="Femenino"  {{ old('genero', $estudiante->user->genero ?? '') == 'Femenino'  ? 'selected' : '' }}>Femenino</option>
+                                                    <option value="Otro"      {{ old('genero', $estudiante->user->genero ?? '') == 'Otro'      ? 'selected' : '' }}>Otro</option>
                                                 </select>
-                                                <div class="invalid-feedback">Seleccione un género</div>
+                                                @error('genero')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
-                                            
                                             <div class="col-md-6 mb-3">
-                                                <label for="fecha_nacimiento{{ $estudiante->id }}" class="col-form-label">
-                                                    <i class="fas fa-calendar-alt"></i> Fecha de Nacimiento
-                                                </label>
-                                                <input type="date" class="form-control" id="fecha_nacimiento{{ $estudiante->id }}" 
-                                                    name="fecha_nacimiento" value="{{ $estudiante->user->fecha_nacimiento ?? '' }}">
+                                                <label class="col-form-label"><i class="fas fa-calendar-alt"></i> Fecha de Nacimiento</label>
+                                                <input type="date" name="fecha_nacimiento"
+                                                    class="form-control @error('fecha_nacimiento') is-invalid @enderror"
+                                                    value="{{ old('fecha_nacimiento', $estudiante->user->fecha_nacimiento ?? '') }}">
+                                                @error('fecha_nacimiento')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
-
                                         <div class="mb-3">
-                                            <label for="direccion{{ $estudiante->id }}" class="col-form-label">
-                                                <i class="fas fa-map-marker-alt"></i> Dirección
-                                            </label>
-                                            <textarea class="form-control" id="direccion{{ $estudiante->id }}" 
-                                                    name="direccion" rows="2" placeholder="Dirección completa del estudiante">{{ $estudiante->user->direccion ?? '' }}</textarea>
+                                            <label class="col-form-label"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                                            <textarea name="direccion" rows="2"
+                                                class="form-control @error('direccion') is-invalid @enderror">{{ old('direccion', $estudiante->user->direccion ?? '') }}</textarea>
+                                            @error('direccion')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
-
-                                        <div class="alert alert-warning mt-2">
-                                            <i class="fas fa-exclamation-triangle"></i> Los campos marcados con <span class="text-danger">*</span> son obligatorios.
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle"></i> Los campos con <span class="text-danger">*</span> son obligatorios.
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -258,25 +287,102 @@
                             </div>
                         </div>
                     </div>
-                    <form action="#" method="POST" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar este estudiante?')">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </button>
-                    </form>
+
+                    {{-- ===================== MODAL ELIMINAR ===================== --}}
+                    <div class="modal fade" id="modalEliminar{{ $estudiante->id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title">Confirmar Eliminación</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                                    <p>¿Eliminar a <strong>{{ $estudiante->user->name }} {{ $estudiante->user->apellido }}</strong>?</p>
+                                    <div class="progress mb-2" style="height: 5px;">
+                                        <div id="progressBar{{ $estudiante->id }}" class="progress-bar bg-danger" style="width: 0%"></div>
+                                    </div>
+                                    <small id="timerText{{ $estudiante->id }}" class="text-muted">Espera 5 segundos</small>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <form action="{{ route('estudiantes.eliminar', $estudiante->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" id="btnEliminar{{ $estudiante->id }}" class="btn btn-danger" disabled>Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
             @endforeach
         </tbody>
     </table>
 </div>
+
 @stop
 
-@section('css')
-    {{-- Add here extra stylesheets --}}
-@stop
+@section('css')@stop
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Auto-cerrar alertas después de 5 segundos
+        setTimeout(function () {
+            document.querySelectorAll('.alert').forEach(function (alert) {
+                new bootstrap.Alert(alert).close();
+            });
+        }, 5000);
+
+        // Reabrir modal CREAR si hubo errores de validación
+        @if($errors->any() && old('_form') == 'crear')
+            new bootstrap.Modal(document.getElementById('modalCrear')).show();
+        @endif
+
+        // Reabrir modal EDITAR si hubo errores de validación
+        @if($errors->any() && old('_form') == 'editar')
+            new bootstrap.Modal(document.getElementById('modalEditar{{ old("_form_id") }}')).show();
+        @endif
+
+        // Temporizador para modales de eliminar
+        @foreach ($estudiantes as $estudiante)
+            let modal{{ $estudiante->id }} = document.getElementById('modalEliminar{{ $estudiante->id }}');
+            let tiempo{{ $estudiante->id }} = 5;
+            let intervalo{{ $estudiante->id }};
+
+            modal{{ $estudiante->id }}.addEventListener('show.bs.modal', function() {
+                tiempo{{ $estudiante->id }} = 5;
+                let progress = document.getElementById('progressBar{{ $estudiante->id }}');
+                let timerText = document.getElementById('timerText{{ $estudiante->id }}');
+                let btn = document.getElementById('btnEliminar{{ $estudiante->id }}');
+                
+                progress.style.width = '0%';
+                timerText.textContent = 'Espera 5 segundos';
+                btn.disabled = true;
+                
+                if (intervalo{{ $estudiante->id }}) clearInterval(intervalo{{ $estudiante->id }});
+                
+                intervalo{{ $estudiante->id }} = setInterval(function() {
+                    tiempo{{ $estudiante->id }}--;
+                    let porcentaje = ((5 - tiempo{{ $estudiante->id }}) / 5) * 100;
+                    progress.style.width = porcentaje + '%';
+                    timerText.textContent = `Espera ${tiempo{{ $estudiante->id }}} segundos`;
+                    
+                    if (tiempo{{ $estudiante->id }} <= 0) {
+                        clearInterval(intervalo{{ $estudiante->id }});
+                        timerText.textContent = '✓ Ya puedes eliminar';
+                        btn.disabled = false;
+                    }
+                }, 1000);
+            });
+            
+            modal{{ $estudiante->id }}.addEventListener('hidden.bs.modal', function() {
+                if (intervalo{{ $estudiante->id }}) clearInterval(intervalo{{ $estudiante->id }});
+            });
+        @endforeach
+    });
+</script>
 @stop

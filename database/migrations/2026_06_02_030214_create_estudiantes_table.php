@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('estudiantes', function (Blueprint $table) {
             $table->id();
-            $table->integer('rude')->unique();
+            $table->string('rude', 50)->unique()->nullable(); 
             //sugerencias ya no maas
             $table->foreignId('user_id')->unique()->constrained();
             //$table->timestamps();
