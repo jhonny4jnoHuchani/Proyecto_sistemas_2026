@@ -12,7 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('materias', function (Blueprint $table) {
-            $table->id();
+            //Llave personalizasda
+            $table->id('id_materia');
+
+            $table->string('nombre',150);
+            $table->string('area',100);
+            $table->integer('carga_horaria');
+            $table->boolean('estado')->default(true);
+
             $table->timestamps();
         });
     }
