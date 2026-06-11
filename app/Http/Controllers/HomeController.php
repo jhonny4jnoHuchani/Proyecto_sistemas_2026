@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Gestion;
 
 class HomeController extends Controller
 {
@@ -23,8 +24,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $user=12345;
-        $madarinas=12345+$user;
-        return view('home', compact('user', 'madarinas'));
+        $gestionActiva = Gestion::where('anio', now()->year)
+                                ->where('estado', true)
+                                ->first();
+
+        return view('home', compact('gestionActiva'));
     }
 }

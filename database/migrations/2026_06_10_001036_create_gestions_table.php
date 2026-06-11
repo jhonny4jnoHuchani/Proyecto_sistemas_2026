@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('gestiones', function (Blueprint $table) {
             $table->id();
             $table->integer('anio')->unique();
-            $table->boolean('estado')->default(true);
+            $table->boolean('estado')->default(false);
+            $table->date('fecha_apertura');
+            $table->date('fecha_clausura')->nullable();
+            $table->string('documento')->nullable(); // ruta en publica para documentos/
             $table->timestamps();
         });
     }

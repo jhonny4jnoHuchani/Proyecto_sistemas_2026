@@ -316,7 +316,7 @@ return [
         ],
         [
             'text' => 'Docentes',
-            'url' => 'docentes/listar',
+            'url' => 'docentes',
             'icon' => 'fas fa-fw fa-user',
         ],
         [

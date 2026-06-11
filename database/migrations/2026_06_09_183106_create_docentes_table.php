@@ -14,14 +14,11 @@ return new class extends Migration
         Schema::create('docentes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-
             $table->string('nombre',100);
             $table->string('apellido',100);
             $table->string('ci',20)->unique();
             $table->string('especialidad',150);
-
             $table->boolean('estado')->default(true);
-
             $table->timestamps();
         });
     }

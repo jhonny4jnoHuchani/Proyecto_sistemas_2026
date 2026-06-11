@@ -2,23 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EstudianteController;
-
+use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\CursoController;
+use App\Http\Controllers\GestionController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes(); //Esta linea esconde la orden "Si alguien pide ver /login, envialo a LoginController"
-# GET sirven solo para mostrar 
-# POST sirven para enviar datos al servidor
-# PUT sirven para actualizar datos en el servidor
-# DELETE sirven para eliminar datos en el servidor
+Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-##aqui listamos los estudiantes????
 Route::get('/estudiantes/listar', [App\Http\Controllers\EstudianteController::class, 'index'])->name('estudiantes.listar');
-
-
 Route::post('/estudiantes/crear', [App\Http\Controllers\EstudianteController::class, 'store'])->name('estudiantes.store');
 Route::put('/estudiantes/actualizar/{id}', [EstudianteController::class, 'update'])->name('estudiantes.actualizar');
 Route::delete('/estudiantes/{id}/eliminar', [EstudianteController::class, 'destroy'])->name('estudiantes.eliminar');
@@ -42,4 +36,13 @@ Route::middleware(['auth'])->group(function () {
     // El recurso se queda tal cual
     Route::resource('cursos', CursoController::class);
     
+    //rutas para docentes---- JAH
+
+    Route::get('docentes/inactivos', [DocenteController::class, 'inactivos'])->name('docentes.inactivos');
+    Route::put('docentes/restore/{id}', [DocenteController::class, 'restore'])->name('docentes.restore');
+    Route::resource('docentes', DocenteController::class)->except(['show']);
+
+    Route::get('gestiones', [GestionController::class, 'index'])->name('gestiones.index');
+    Route::post('gestiones', [GestionController::class, 'store'])->name('gestiones.store');
+    Route::put('gestiones/{gestion}', [GestionController::class, 'update'])->name('gestiones.update');
 });

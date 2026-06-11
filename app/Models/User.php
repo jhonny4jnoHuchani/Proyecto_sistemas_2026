@@ -20,15 +20,11 @@ class User extends Authenticatable
      */
     //modificado para agregar los campos adicionales del proyecto
     protected $fillable = [
-        'ci',
-        'genero',
-        'name',
-        'apellido',
-        'celular',
-        'direccion',
-        'fecha_nacimiento',
+        'username',      // ← Agrega esto (es lo que usa tu tabla)
         'email',
         'password',
+        'rol',           // Si lo necesitas en registro
+        'estado',        // Si lo quieres manejar
     ];
 
     /**

@@ -7,59 +7,81 @@ use Illuminate\Http\Request;
 
 class GestionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $gestiones = Gestion::orderBy('anio', 'desc')->get();
+        return view('gestion.index', compact('gestiones'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'anio'           => 'required|integer|unique:gestiones,anio',
+            'fecha_apertura' => 'required|date',
+            'fecha_clausura' => 'nullable|date|after:fecha_apertura',
+            'documento'      => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+        ], [
+            'anio.unique'           => 'Ya existe una gestión para ese año.',
+            'fecha_clausura.after'  => 'La fecha de clausura debe ser posterior a la apertura.',
+            'documento.mimes'       => 'Solo se permiten archivos PDF, DOC o DOCX.',
+            'documento.max'         => 'El documento no debe superar 5MB.',
+        ]);
+
+        $rutaDocumento = null;
+
+        if ($request->hasFile('documento')) {
+            $archivo = $request->file('documento');
+            $nombre  = 'gestion_' . $request->anio . '.' . $archivo->getClientOriginalExtension();
+            $archivo->move(public_path('gestiones'), $nombre);
+            $rutaDocumento = 'gestiones/' . $nombre;
+        }
+
+        Gestion::create([
+            'anio'           => $request->anio,
+            'estado'         => true,
+            'fecha_apertura' => $request->fecha_apertura,
+            'fecha_clausura' => $request->fecha_clausura,
+            'documento'      => $rutaDocumento,
+        ]);
+
+        return redirect()->route('gestiones.index')
+                         ->with('success', 'Gestión ' . $request->anio . ' iniciada correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Gestion $gestion)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Gestion $gestion)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Gestion $gestion)
     {
-        //
-    }
+        $request->validate([
+            'fecha_apertura' => 'required|date',
+            'fecha_clausura' => 'nullable|date|after:fecha_apertura',
+            'documento'      => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+        ], [
+            'fecha_clausura.after' => 'La fecha de clausura debe ser posterior a la apertura.',
+            'documento.mimes'      => 'Solo se permiten archivos PDF, DOC o DOCX.',
+            'documento.max'        => 'El documento no debe superar 5MB.',
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Gestion $gestion)
-    {
-        //
+        // Si sube nuevo documento, reemplaza el anterior
+        if ($request->hasFile('documento')) {
+            // Eliminar el anterior si existe
+            if ($gestion->documento && file_exists(public_path($gestion->documento))) {
+                unlink(public_path($gestion->documento));
+            }
+
+            $archivo = $request->file('documento');
+            $nombre  = 'gestion_' . $gestion->anio . '.' . $archivo->getClientOriginalExtension();
+            $archivo->move(public_path('gestiones'), $nombre);
+            $gestion->documento = 'gestiones/' . $nombre;
+        }
+
+        $gestion->fecha_apertura = $request->fecha_apertura;
+        $gestion->fecha_clausura = $request->fecha_clausura;
+        $gestion->save();
+
+        return redirect()->route('gestiones.index')
+                         ->with('success', 'Gestión ' . $gestion->anio . ' actualizada correctamente.');
     }
 }
