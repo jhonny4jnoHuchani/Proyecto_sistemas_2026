@@ -321,8 +321,9 @@ return [
         ],
         [
             'text' => 'Cursos',
-            'url' => 'cursos/listar',
             'icon' => 'fas fa-fw fa-lock',
+            'url'=>'cursos',
+            'active'=>['cursos*'],
         ],
         [
             'text' => 'gestion academica',

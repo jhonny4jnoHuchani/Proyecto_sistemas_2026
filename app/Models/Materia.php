@@ -8,7 +8,6 @@ class Materia extends Model
 {
     protected $table='materias';
 
-    protected $primaryKey = 'id_materia';
 
     protected $fillable = [
         'nombre',

@@ -9,13 +9,18 @@ class Curso extends Model
     // indicar la tabla asociada
     protected $table = 'cursos';
 
-    //Definir la llave primaria 
-    protected $primaryKey = 'id_curso';
 
-    protected $fulable = [
+    protected $fillable = [
         'nombre',
         'paralelo',
         'turno',
         'estado',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'estado'=>'boolean'
+        ];
+    }
 }

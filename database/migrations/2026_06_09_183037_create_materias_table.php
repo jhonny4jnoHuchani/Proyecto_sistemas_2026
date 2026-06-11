@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('materias', function (Blueprint $table) {
             //Llave personalizasda
-            $table->id('id_materia');
+            $table->id();
 
             $table->string('nombre',150);
             $table->string('area',100);

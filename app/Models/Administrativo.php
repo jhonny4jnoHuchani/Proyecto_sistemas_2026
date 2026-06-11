@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Administrativo extends Model
 {
     protected $table = 'administrativos';
-    protected $primaryKey = 'id_admin';
 
     protected $fillable = [
         'user_id',

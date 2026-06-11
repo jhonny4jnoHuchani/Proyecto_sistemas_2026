@@ -9,7 +9,6 @@ class Docente extends Model
 {
     //
     protected $table = 'docentes';
-    protected $primaryKey = 'id_docente';
 
     protected $fillable = [
         'user_id',

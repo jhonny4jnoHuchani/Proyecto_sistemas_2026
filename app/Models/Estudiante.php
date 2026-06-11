@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Estudiante extends Model
 {
     protected $table='estudiantes';
-    protected $primaryKey = 'id_estudiante';
 
     protected $fillable = [
         'user_id',
