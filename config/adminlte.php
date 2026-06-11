@@ -341,9 +341,9 @@ return [
         ],
         ['header' => 'labels'],
         [
-            'text' => 'important',
+            'text' => 'GESTIONES',
             'icon_color' => 'red',
-            'url' => '#',
+            'url' => 'gestiones',
         ],
         [
             'text' => 'warning',

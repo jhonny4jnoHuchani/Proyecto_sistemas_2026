@@ -55,7 +55,9 @@
                             <td>{{ $gestion->fecha_clausura?->format('d/m/Y') ?? '—' }}</td>
                             <td>
                                 @if($gestion->documento)
-                                    <a href="{{ asset($gestion->documento) }}" target="_blank" class="btn btn-xs btn-outline-secondary">
+                                    <a href="{{ asset('storage/' . $gestion->documento) }}" 
+                                       target="_blank" 
+                                       class="btn btn-xs btn-outline-secondary">
                                         <i class="fas fa-file-pdf"></i> Ver
                                     </a>
                                 @else
@@ -104,20 +106,32 @@
                     @csrf
                     <div class="modal-body">
 
+                        @if($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
                         <div class="form-group">
                             <label>Año</label>
                             <input type="number" name="anio" class="form-control"
-                                   value="{{ now()->year }}" required>
+                                   value="{{ old('anio', now()->year) }}" required>
                         </div>
 
                         <div class="form-group">
                             <label>Fecha de Apertura</label>
-                            <input type="date" name="fecha_apertura" class="form-control" required>
+                            <input type="date" name="fecha_apertura" class="form-control"
+                                   value="{{ old('fecha_apertura') }}" required>
                         </div>
 
                         <div class="form-group">
                             <label>Fecha de Clausura <small class="text-muted">(opcional)</small></label>
-                            <input type="date" name="fecha_clausura" class="form-control">
+                            <input type="date" name="fecha_clausura" class="form-control"
+                                   value="{{ old('fecha_clausura') }}">
                         </div>
 
                         <div class="form-group">
@@ -188,15 +202,12 @@
     </div>
 
 @stop
+
 @section('js')
 <script>
     @if($errors->any())
         $(document).ready(function() {
-            @if(session('modal') === 'edit')
-                $('#modal-edit').modal('show');
-            @else
-                $('#modal-create').modal('show');
-            @endif
+            $('#modal-create').modal('show');
         });
     @endif
 
@@ -212,16 +223,15 @@
         $('#edit_fecha_clausura').val(fecha_clausura);
 
         if (documento) {
-            let base = "{{ url('/') }}/";
+            let url_doc = "{{ asset('storage') }}/" + documento;
             $('#edit-doc-actual').html(
-                'Documento actual: <a href="' + base + documento + '" target="_blank">ver archivo</a>'
+                'Documento actual: <a href="' + url_doc + '" target="_blank">ver archivo</a>'
             );
         } else {
             $('#edit-doc-actual').text('Sin documento cargado.');
         }
 
-        let url = "{{ route('gestiones.update', ':id') }}";
-        url = url.replace(':id', id);
+        let url = "{{ url('gestiones') }}/" + id;
         $('#form-edit').attr('action', url);
     });
 </script>

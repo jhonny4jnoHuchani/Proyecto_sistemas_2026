@@ -43,6 +43,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('docentes', DocenteController::class)->except(['show']);
 
     Route::get('gestiones', [GestionController::class, 'index'])->name('gestiones.index');
-    Route::post('gestiones', [GestionController::class, 'store'])->name('gestiones.store');
+    Route::post('gestiones/crear', [GestionController::class, 'store'])->name('gestiones.store');
     Route::put('gestiones/{gestion}', [GestionController::class, 'update'])->name('gestiones.update');
 });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Gestion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class GestionController extends Controller
 {
@@ -13,8 +14,6 @@ class GestionController extends Controller
         return view('gestion.index', compact('gestiones'));
     }
 
-
-
     public function store(Request $request)
     {
         $request->validate([
@@ -23,19 +22,18 @@ class GestionController extends Controller
             'fecha_clausura' => 'nullable|date|after:fecha_apertura',
             'documento'      => 'nullable|file|mimes:pdf,doc,docx|max:5120',
         ], [
-            'anio.unique'           => 'Ya existe una gestión para ese año.',
-            'fecha_clausura.after'  => 'La fecha de clausura debe ser posterior a la apertura.',
-            'documento.mimes'       => 'Solo se permiten archivos PDF, DOC o DOCX.',
-            'documento.max'         => 'El documento no debe superar 5MB.',
+            'anio.unique'          => 'Ya existe una gestión para ese año.',
+            'fecha_clausura.after' => 'La fecha de clausura debe ser posterior a la apertura.',
+            'documento.mimes'      => 'Solo se permiten archivos PDF, DOC o DOCX.',
+            'documento.max'        => 'El documento no debe superar 5MB.',
         ]);
 
         $rutaDocumento = null;
 
         if ($request->hasFile('documento')) {
             $archivo = $request->file('documento');
-            $nombre  = 'gestion_' . $request->anio . '.' . $archivo->getClientOriginalExtension();
-            $archivo->move(public_path('gestiones'), $nombre);
-            $rutaDocumento = 'gestiones/' . $nombre;
+            $nombre = 'gestion_' . $request->anio . '_' . date('Y-m-d_H-i-s') . '.' . $archivo->getClientOriginalExtension();
+            $rutaDocumento = $archivo->storeAs('gestiones', $nombre, 'public');
         }
 
         Gestion::create([
@@ -50,8 +48,6 @@ class GestionController extends Controller
                          ->with('success', 'Gestión ' . $request->anio . ' iniciada correctamente.');
     }
 
-
-
     public function update(Request $request, Gestion $gestion)
     {
         $request->validate([
@@ -64,17 +60,15 @@ class GestionController extends Controller
             'documento.max'        => 'El documento no debe superar 5MB.',
         ]);
 
-        // Si sube nuevo documento, reemplaza el anterior
         if ($request->hasFile('documento')) {
             // Eliminar el anterior si existe
-            if ($gestion->documento && file_exists(public_path($gestion->documento))) {
-                unlink(public_path($gestion->documento));
+            if ($gestion->documento) {
+                Storage::disk('public')->delete($gestion->documento);
             }
 
             $archivo = $request->file('documento');
             $nombre  = 'gestion_' . $gestion->anio . '.' . $archivo->getClientOriginalExtension();
-            $archivo->move(public_path('gestiones'), $nombre);
-            $gestion->documento = 'gestiones/' . $nombre;
+            $gestion->documento = $archivo->storeAs('gestiones', $nombre, 'public');
         }
 
         $gestion->fecha_apertura = $request->fecha_apertura;
