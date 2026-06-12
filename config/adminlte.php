@@ -331,6 +331,16 @@ return [
             'icon'=>'fas fa-book',
         ],
         [
+            'text'=>'Designaciones',
+            'route'=>'asignaciones.index',
+            'icon'=>'fas fa-chalkboard-teacher',
+        ],
+        [
+            'text' => 'Trimestres',
+            'route'  => '',
+            'icon' => 'fas fa-calendar-alt',
+        ],
+        [
             'text' => 'gestion academica',
             'icon' => 'fas fa-fw fa-share',
             'submenu' => [

@@ -25,7 +25,7 @@
             </div>
         </div>
 
-        
+
         <div class="col-lg-3 col-6">
             <div class="small-box bg-purple">
                 <div class="inner">
@@ -38,6 +38,18 @@
                 <a href="{{ route('materias.index') }}" class="small-box-footer">
                     Ingresar <i class="fas fa-arrow-circle-right"></i>
                 </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>Trimestres</h3>
+                    <p>Periodos de Evaluación</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                
             </div>
         </div>
 
@@ -53,6 +65,20 @@
                 </div>
                 <a href="{{ route('docentes.index') }}" class="small-box-footer">
                     Ingresar <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-teal">
+                <div class="inner">
+                    <h3>Carga</h3>
+                    <p>Asignaciones Académicas</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <a href="{{ route('asignaciones.index') }}" class="small-box-footer">
+                    Configurar <i class="fas fa-arrow-circle-right"></i>
                 </a>
             </div>
         </div>

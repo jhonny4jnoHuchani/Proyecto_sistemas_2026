@@ -5,7 +5,9 @@ use App\Http\Controllers\EstudianteController;
 use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\GestionController;
-USE App\Http\Controllers\MateriaController;
+use App\Http\Controllers\MateriaController;
+use App\Http\Controllers\AsignacionController;
+use App\Http\Controllers\TrimestreController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -55,4 +57,15 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('papelera/materias/{id}/forzar-eliminacion', [MateriaController::class, 'forceDelete'])->name('materias.forceDelete');
     
     Route::resource('materias', MateriaController::class);
+
+
+    // Papelera de Asignaciones
+    Route::get('papelera/asignaciones', [AsignacionController::class, 'inactivos'])->name('asignaciones.inactivos');
+    Route::post('papelera/asignaciones/{id}/restaurar', [AsignacionController::class, 'restaurar'])->name('asignaciones.restaurar');
+    Route::delete('papelera/asignaciones/{id}/forzar-eliminacion', [AsignacionController::class, 'forceDelete'])->name('asignaciones.forceDelete');
+
+    Route::resource('asignaciones', AsignacionController::class);
+    //VISTA PARA ASIGNACIONES (DESIGNACIONES)
+    Route::resource('asignaciones', AsignacionController::class);
+
 });
