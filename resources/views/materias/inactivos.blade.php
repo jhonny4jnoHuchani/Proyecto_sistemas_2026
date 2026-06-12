@@ -1,12 +1,13 @@
 @extends('adminlte::page')
 
-@section('title', 'Cursos Inactivos')
+@section('title', 'Materias Inactivas')
 
 @section('content_header')
-    <h1>Papelera: Cursos Eliminados</h1>
+    <h1>Papelera: Materias Eliminadas</h1>
 @stop
 
 @section('content')
+
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -14,16 +15,10 @@
         </div>
     @endif
 
-    @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            <i class="fas fa-exclamation-circle mr-2"></i> {{ session('error') }}
-        </div>
-    @endif
     <div class="card card-danger card-outline">
         <div class="card-header">
-            <a href="{{ route('cursos.index') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Volver a Cursos Activos
+            <a href="{{ route('materias.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver a Materias Activas
             </a>
         </div>
         
@@ -33,27 +28,27 @@
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Paralelo</th>
-                        <th>Turno</th>
+                        <th>Área</th>
+                        <th>Carga Horaria</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($cursos as $curso)
+                    @forelse ($materias as $materia)
                         <tr>
-                            <td>{{ $curso->id }}</td>
-                            <td>{{ $curso->nombre }}</td>
-                            <td>{{ $curso->paralelo }}</td>
-                            <td>{{ $curso->turno }}</td>
+                            <td>{{ $materia->id }}</td>
+                            <td>{{ $materia->nombre }}</td>
+                            <td>{{ $materia->area }}</td>
+                            <td>{{ $materia->carga_horaria }} hrs</td>
                             <td>
-                                <form action="{{ route('cursos.restaurar', $curso->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Deseas restaurar este curso?');">
+                                <form action="{{ route('materias.restaurar', $materia->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Deseas restaurar esta materia?');">
                                     @csrf
                                     <button type="submit" class="btn btn-sm btn-success">
                                         <i class="fas fa-undo"></i> Restaurar
                                     </button>
                                 </form>
 
-                                <form action="{{ route('cursos.forceDelete', $curso->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¡ADVERTENCIA! Esta acción no se puede deshacer. ¿Deseas eliminarlo de la base de datos para siempre?');">
+                                <form action="{{ route('materias.forceDelete', $materia->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¡ADVERTENCIA! Esta acción no se puede deshacer. ¿Deseas eliminar esta materia permanentemente?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger">
@@ -64,7 +59,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">No hay cursos en la papelera.</td>
+                            <td colspan="5" class="text-center text-muted">No hay materias en la papelera.</td>
                         </tr>
                     @endforelse
                 </tbody>

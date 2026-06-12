@@ -5,6 +5,7 @@ use App\Http\Controllers\EstudianteController;
 use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\GestionController;
+USE App\Http\Controllers\MateriaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -45,4 +46,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('gestiones', [GestionController::class, 'index'])->name('gestiones.index');
     Route::post('gestiones/crear', [GestionController::class, 'store'])->name('gestiones.store');
     Route::put('gestiones/{gestion}', [GestionController::class, 'update'])->name('gestiones.update');
+
+    // ==========================================
+    // RUTAS PARA MATERIAS
+    // ==========================================
+    Route::get('papelera/materias', [MateriaController::class, 'inactivos'])->name('materias.inactivos');
+    Route::post('papelera/materias/{id}/restaurar', [MateriaController::class, 'restaurar'])->name('materias.restaurar');
+    Route::delete('papelera/materias/{id}/forzar-eliminacion', [MateriaController::class, 'forceDelete'])->name('materias.forceDelete');
+    
+    Route::resource('materias', MateriaController::class);
 });

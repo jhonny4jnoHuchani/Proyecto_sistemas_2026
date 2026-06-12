@@ -326,6 +326,11 @@ return [
             'active'=>['cursos*'],
         ],
         [
+            'text'=>'Materias',
+            'route'=>'materias.index',
+            'icon'=>'fas fa-book',
+        ],
+        [
             'text' => 'gestion academica',
             'icon' => 'fas fa-fw fa-share',
             'submenu' => [

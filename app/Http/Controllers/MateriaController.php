@@ -12,7 +12,9 @@ class MateriaController extends Controller
      */
     public function index()
     {
-        //
+        //Traemos todas las materias que tengan el estado en true (activas)
+        $materias = Materia::where('estado',true)->get();
+        return view('materias.index',compact('materias'));
     }
 
     /**
@@ -29,6 +31,15 @@ class MateriaController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+            'nombre'        => 'required|string|max:150',
+            'area'          => 'required|string|max:100',
+            'carga_horaria' => 'required|integer|min:1',
+        ]);
+
+        Materia::create($request->all());
+        return redirect()->route('materias.index')->with('success','La materia fue registrada exitosamente.');
+
     }
 
     /**
@@ -53,6 +64,14 @@ class MateriaController extends Controller
     public function update(Request $request, Materia $materia)
     {
         //
+        $request->validate([
+            'nombre'        => 'required|string|max:150',
+            'area'          => 'required|string|max:100',
+            'carga_horaria' => 'required|integer|min:1',
+        ]);
+        $materia->update($request->all());
+
+        return redirect()->route('materias.index')->with('success', 'La materia fue actualizada correctamente.');
     }
 
     /**
@@ -61,5 +80,35 @@ class MateriaController extends Controller
     public function destroy(Materia $materia)
     {
         //
+        $materia->estado = false;
+        $materia->save();
+
+        return redirect()->route('materias.index')->with('success', 'La materia fue enviada a la papelera.');
+    }
+
+    // 1. Mostrar la tabla de materias eliminadas lógicamente
+    public function inactivos()
+    {
+        $materias = Materia::where('estado', false)->get();
+        return view('materias.inactivos', compact('materias'));
+    }
+
+    // 2. Restaurar una materia (volver su estado a true)
+    public function restaurar($id)
+    {
+        $materia = Materia::findOrFail($id);
+        $materia->estado = true;
+        $materia->save();
+
+        return redirect()->route('materias.inactivos')->with('success', 'La materia fue restaurada correctamente.');
+    }
+
+    // 3. Eliminar físicamente (borrar para siempre de MySQL)
+    public function forceDelete($id)
+    {
+        $materia = Materia::findOrFail($id);
+        $materia->delete();
+
+        return redirect()->route('materias.inactivos')->with('success', 'La materia fue eliminada permanentemente de la base de datos.');
     }
 }
