@@ -20,6 +20,7 @@
             <i class="fas fa-exclamation-circle mr-2"></i> {{ session('error') }}
         </div>
     @endif
+    
     <div class="card card-danger card-outline">
         <div class="card-header">
             <a href="{{ route('cursos.index') }}" class="btn btn-secondary">
@@ -32,7 +33,7 @@
                 <thead class="thead-dark">
                     <tr>
                         <th>ID</th>
-                        <th>Nombre</th>
+                        <th>Grado</th>      {{-- CAMBIADO: Nombre → Grado --}}
                         <th>Paralelo</th>
                         <th>Turno</th>
                         <th>Acciones</th>
@@ -42,7 +43,7 @@
                     @forelse ($cursos as $curso)
                         <tr>
                             <td>{{ $curso->id }}</td>
-                            <td>{{ $curso->nombre }}</td>
+                            <td>{{ $curso->grado }}° {{-- CAMBIADO: muestra el grado con el símbolo de grado --}}</td>
                             <td>{{ $curso->paralelo }}</td>
                             <td>{{ $curso->turno }}</td>
                             <td>

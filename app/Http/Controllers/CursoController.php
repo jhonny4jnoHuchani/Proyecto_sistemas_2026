@@ -12,10 +12,8 @@ class CursoController extends Controller
      */
     public function index()
     {
-        $cursos = Curso::where('estado', true)->get();
-        //
-        return view('cursos.index',compact('cursos'));
-
+        $cursos = Curso::where('estado', true)->orderBy('grado')->orderBy('paralelo')->get();
+        return view('cursos.index', compact('cursos'));
     }
 
     /**
@@ -23,7 +21,6 @@ class CursoController extends Controller
      */
     public function create()
     {
-        // Aca le direcmos a laravel que busque la carpeta 'cursos' y nos muestre el archivo 'create.blade.php'
         return view('cursos.create');
     }
 
@@ -32,50 +29,85 @@ class CursoController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        // 1. REGLAS DE SEGURIDAD (Validación)
-        // Revisamos que nadie nos mande textos más largos de lo que aguanta la base de datos
+        // VALIDACIÓN CORREGIDA
         $request->validate([
-            'nombre'   => 'required|string|max:100',
+            'grado'    => 'required|integer|min:1|max:6',  // Cambiado a integer
             'paralelo' => 'required|string|max:10',
-            'turno'    => 'required|string|max:50',
+            'turno'    => 'required|string|in:Mañana,Tarde,Noche',  // Mejor validación
         ]);
 
-        // 2. GUARDAR EN LA BASE DE DATOS
-        // Esto toma todos los datos del formulario y crea el registro automáticamente.
-        \App\Models\Curso::create($request->all());
+        // Verificar si ya existe un curso con el mismo grado, paralelo y turno activo
+        $existe = Curso::where('grado', $request->grado)
+                        ->where('paralelo', $request->paralelo)
+                        ->where('turno', $request->turno)
+                        ->where('estado', true)
+                        ->exists();
 
-        // 3. REDIRECCIONAR AL USUARIO
-        // Lo mandamos de vuelta a la tabla principal con un mensaje en la "mochila" (session)
-        return redirect()->route('cursos.index')->with('success', 'El curso se guardó correctamente.');
+        if ($existe) {
+            return redirect()->back()
+                ->with('error', 'Ya existe un curso activo con ese grado, paralelo y turno.')
+                ->withInput();
+        }
+
+        // GUARDAR EN LA BASE DE DATOS
+        Curso::create([
+            'grado' => $request->grado,
+            'paralelo' => $request->paralelo,
+            'turno' => $request->turno,
+            'estado' => true,
+        ]);
+
+        return redirect()->route('cursos.index')
+            ->with('success', 'El curso se guardó correctamente.');
     }
 
-
-    // 1. Mostrar la tabla de eliminados lógicamente
+    /**
+     * Display soft deleted cursos.
+     */
     public function inactivos()
     {
-        $cursos = Curso::where('estado', false)->get();
+        $cursos = Curso::where('estado', false)->orderBy('grado')->orderBy('paralelo')->get();
         return view('cursos.inactivos', compact('cursos'));
     }
 
-    // 2. Restaurar un curso (volver su estado a true)
+    /**
+     * Restore a soft deleted curso.
+     */
     public function restaurar($id)
     {
         $curso = Curso::findOrFail($id);
+        
+        // Verificar si ya existe un curso activo con los mismos datos
+        $existe = Curso::where('grado', $curso->grado)
+                        ->where('paralelo', $curso->paralelo)
+                        ->where('turno', $curso->turno)
+                        ->where('estado', true)
+                        ->exists();
+
+        if ($existe) {
+            return redirect()->route('cursos.inactivos')
+                ->with('error', 'No se puede restaurar porque ya existe un curso activo con ese grado, paralelo y turno.');
+        }
+
         $curso->estado = true;
         $curso->save();
 
-        return redirect()->route('cursos.inactivos')->with('success', 'El curso fue restaurado correctamente.');
+        return redirect()->route('cursos.inactivos')
+            ->with('success', 'El curso fue restaurado correctamente.');
     }
 
-    // 3. Eliminar físicamente (borrar para siempre de la base de datos)
+    /**
+     * Force delete from database.
+     */
     public function forceDelete($id)
     {
         $curso = Curso::findOrFail($id);
-        $curso->delete(); // Esto hace el DELETE real en MySQL
+        $curso->delete(); // DELETE real en MySQL
 
-        return redirect()->route('cursos.inactivos')->with('success', 'El curso fue eliminado permanentemente.');
+        return redirect()->route('cursos.inactivos')
+            ->with('success', 'El curso fue eliminado permanentemente.');
     }
+
     /**
      * Display the specified resource.
      */
@@ -97,31 +129,48 @@ class CursoController extends Controller
      */
     public function update(Request $request, Curso $curso)
     {
-        //1. Validar los datos
+        // VALIDACIÓN CORREGIDA
         $request->validate([
-            'nombre'=>'required|string|max:100',
-            'paralelo'=>'required|string|max:10',
-            'turno'=>'required|string|max:50',
+            'grado'    => 'required|integer|min:1|max:6',  // Cambiado a integer
+            'paralelo' => 'required|string|max:10',
+            'turno'    => 'required|string|in:Mañana,Tarde,Noche',
         ]);
 
-        //2. Actuializar el curso directamente (Laravek ya lo buscó y lo tiene en la variable $curso)
-        $curso->update($request->all());
+        // Verificar si ya existe otro curso con los mismos datos (excepto el actual)
+        $existe = Curso::where('grado', $request->grado)
+                        ->where('paralelo', $request->paralelo)
+                        ->where('turno', $request->turno)
+                        ->where('estado', true)
+                        ->where('id', '!=', $curso->id)
+                        ->exists();
 
-        //3. Redireccionamos a la tabla nuevamanete
-        return redirect()->route('cursos.index')->with('success','El curso se actualizó correctamente.');
+        if ($existe) {
+            return redirect()->back()
+                ->with('error', 'Ya existe otro curso activo con ese grado, paralelo y turno.')
+                ->withInput();
+        }
+
+        // ACTUALIZAR EL CURSO
+        $curso->update([
+            'grado' => $request->grado,
+            'paralelo' => $request->paralelo,
+            'turno' => $request->turno,
+        ]);
+
+        return redirect()->route('cursos.index')
+            ->with('success', 'El curso se actualizó correctamente.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage (Soft Delete).
      */
     public function destroy(Curso $curso)
     {
-        //En lugar de $curso->delete()
-        //Simplemente camviamos su estado a inactivo
-
+        // Soft delete: solo cambiamos estado a false
         $curso->estado = false;
         $curso->save();
 
-        return redirect()->route('cursos.index')->with('success','El curso fue eliminado correctamente.');
+        return redirect()->route('cursos.index')
+            ->with('success', 'El curso fue eliminado correctamente.');
     }
 }

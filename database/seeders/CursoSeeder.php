@@ -10,30 +10,45 @@ class CursoSeeder extends Seeder
     public function run(): void
     {
         Curso::create([
-            'nombre' => 'Primero',
+            'grado' => 1,           // Cambiado: 'nombre' → 'grado'
             'paralelo' => 'A',
             'turno' => 'Mañana',
             'estado' => true
         ]);
 
         Curso::create([
-            'nombre' => 'Segundo',
+            'grado' => 2,           // Cambiado: 'nombre' → 'grado'
             'paralelo' => 'B',
             'turno' => 'Tarde',
             'estado' => true
         ]);
 
         Curso::create([
-            'nombre' => 'Tercero',
+            'grado' => 3,           // Cambiado: 'nombre' → 'grado'
             'paralelo' => 'C',
             'turno' => 'Noche',
             'estado' => false
         ]);
 
         Curso::create([
-            'nombre' => 'Cuarto',
+            'grado' => 4,           // Cambiado: 'nombre' → 'grado'
             'paralelo' => 'A',
             'turno' => 'Mañana',
+            'estado' => true
+        ]);
+
+        // Puedes agregar más cursos de ejemplo
+        Curso::create([
+            'grado' => 5,
+            'paralelo' => 'B',
+            'turno' => 'Tarde',
+            'estado' => true
+        ]);
+
+        Curso::create([
+            'grado' => 6,
+            'paralelo' => 'C',
+            'turno' => 'Noche',
             'estado' => true
         ]);
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Docente;
+use App\Models\Materia;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,13 +15,10 @@ class DocenteController extends Controller
      */
     public function index()
     {
-        // Obtener solo docentes activos con su relación de usuario
-        $docentes = Docente::where('estado', true)
-                            ->with('user')
-                            ->latest()
-                            ->get();
+        $docentes = Docente::where('estado', true)->with('user')->latest()->get();
+        $materias = Materia::where('estado', true)->orderBy('nombre')->get();
         
-        return view('docentes.index', compact('docentes'));
+        return view('docentes.index', compact('docentes', 'materias'));
     }
 
     /**
@@ -42,7 +40,7 @@ class DocenteController extends Controller
             'apellido' => 'required|string|max:255',
             'ci' => 'required|string|unique:docentes,ci|max:20',
             'email' => 'required|email|unique:users,email',
-            'especialidad' => 'required|string|max:255',
+            'especialidad' => 'required|string|max:255|exists:materias,nombre',
         ]);
 
         // 1. Crear el Usuario
@@ -79,7 +77,7 @@ class DocenteController extends Controller
             'apellido' => 'required|string|max:255',
             'ci' => 'required|string|max:20|unique:docentes,ci,' . $docente->id,
             'email' => 'required|email|unique:users,email,' . $docente->user_id,
-            'especialidad' => 'required|string|max:255',
+            'especialidad' => 'required|string|max:255|exists:materias,nombre',
         ]);
 
         // 1. Actualizar el Usuario relacionado

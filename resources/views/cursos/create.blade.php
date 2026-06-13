@@ -4,9 +4,11 @@
 @section('content_header')
     <h1>Registrar Nuevo Curso</h1>
 @stop
+
 @section('content')
     <div class="row">
-        <div class="col-md-6"> <div class="card card-primary">
+        <div class="col-md-6"> 
+            <div class="card card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Datos del Curso</h3>
                 </div>
@@ -18,9 +20,18 @@
 
                     <div class="card-body">
                         
+                        {{-- CAMBIADO: de nombre a grado --}}
                         <div class="form-group">
-                            <label for="nombre">Nombre del Curso</label>
-                            <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Ej: Primero de Secundaria" required>
+                            <label for="grado">Grado</label>
+                            <select name="grado" class="form-control" id="grado" required>
+                                <option value="">Seleccione un grado...</option>
+                                <option value="1">1ro</option>
+                                <option value="2">2do</option>
+                                <option value="3">3ro</option>
+                                <option value="4">4to</option>
+                                <option value="5">5to</option>
+                                <option value="6">6to</option>
+                            </select>
                         </div>
                         
                         <div class="form-group">
@@ -50,4 +61,3 @@
         </div>
     </div>
 @stop
-

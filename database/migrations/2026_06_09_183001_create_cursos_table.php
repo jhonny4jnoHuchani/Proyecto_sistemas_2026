@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('cursos', function (Blueprint $table) {
             $table->id();
 
-            $table->string('nombre',100);
-            $table->string('paralelo',10);
+            // CAMBIADO: de string('nombre') a integer('grado') by.    JAH
+            $table->integer('grado'); 
+            $table->string('paralelo', 10);
             $table->string('turno');
             $table->boolean('estado')->default(true);
 
