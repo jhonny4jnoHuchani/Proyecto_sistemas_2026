@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Estudiante extends Model
 {
@@ -23,18 +23,24 @@ class Estudiante extends Model
     
     public $timestamps = false;
     
-//esto esta cargando los datos desde el usuario mediante una funcion de concatenacion
-//aqui ya NO se usa join inner join
     protected function casts(): array
     {
         return [
             'estado' => 'boolean',
-            'fecha_nacimiento' => 'date', // Laravel convertirá esto en un objeto Carbon para manipular fechas fácilmente
+            'fecha_nacimiento' => 'date',
         ];
     }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // Última inscripción activa del estudiante (su curso actual)
+    public function inscripcionActiva(): HasOne
+    {
+        return $this->hasOne(Inscripcion::class, 'id_estudiante')
+                     ->where('estado', true)
+                     ->latest('id_inscripcion');
     }
 }

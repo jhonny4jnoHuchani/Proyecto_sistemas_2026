@@ -121,6 +121,29 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    {{-- ===== Grado y Paralelo ===== --}}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="col-form-label"><i class="fas fa-school"></i> Grado <span class="text-danger">*</span></label>
+                            <select id="grado_select_crear" class="form-select">
+                                <option value="">Seleccione grado</option>
+                                @for($g = 1; $g <= 6; $g++)
+                                    <option value="{{ $g }}" {{ old('grado_select') == $g ? 'selected' : '' }}>{{ $g }}°</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="col-form-label"><i class="fas fa-users"></i> Paralelo <span class="text-danger">*</span></label>
+                            <select name="id_curso" id="paralelo_select_crear" class="form-select @error('id_curso') is-invalid @enderror">
+                                <option value="">Seleccione un grado primero</option>
+                            </select>
+                            @error('id_curso')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i> Los campos con <span class="text-danger">*</span> son obligatorios.
                     </div>
@@ -150,6 +173,7 @@
                 <th>Dirección</th>
                 <th>Fecha Nac.</th>
                 <th>RUDE</th>
+                <th>Curso</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -163,6 +187,14 @@
                 <td>{{ $estudiante->user->direccion ?? 'N/A' }}</td>
                 <td>{{ $estudiante->user->fecha_nacimiento ?? 'N/A' }}</td>
                 <td>{{ $estudiante->rude ?? 'N/A' }}</td>
+                <td>
+                    @if($estudiante->inscripcionActiva && $estudiante->inscripcionActiva->curso)
+                        {{ $estudiante->inscripcionActiva->curso->grado }}°
+                        "{{ $estudiante->inscripcionActiva->curso->paralelo }}"
+                    @else
+                        <span class="text-muted">Sin curso</span>
+                    @endif
+                </td>
                 <td>
                     {{-- Botón Editar --}}
                     <button class="btn btn-sm btn-warning" data-bs-toggle="modal" 
@@ -271,6 +303,36 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
+
+                                        {{-- ===== Grado y Paralelo ===== --}}
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="col-form-label"><i class="fas fa-school"></i> Grado <span class="text-danger">*</span></label>
+                                                <select class="form-select grado_select_editar"
+                                                    data-estudiante="{{ $estudiante->id }}"
+                                                    data-curso-actual="{{ $estudiante->inscripcionActiva->id_curso ?? '' }}">
+                                                    <option value="">Seleccione grado</option>
+                                                    @for($g = 1; $g <= 6; $g++)
+                                                        <option value="{{ $g }}"
+                                                            {{ ($estudiante->inscripcionActiva->curso->grado ?? null) == $g ? 'selected' : '' }}>
+                                                            {{ $g }}°
+                                                        </option>
+                                                    @endfor
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="col-form-label"><i class="fas fa-users"></i> Paralelo <span class="text-danger">*</span></label>
+                                                <select name="id_curso"
+                                                    class="form-select paralelo_select_editar @error('id_curso') is-invalid @enderror"
+                                                    data-estudiante="{{ $estudiante->id }}">
+                                                    <option value="">Seleccione un grado primero</option>
+                                                </select>
+                                                @error('id_curso')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
                                         <div class="alert alert-warning">
                                             <i class="fas fa-exclamation-triangle"></i> Los campos con <span class="text-danger">*</span> son obligatorios.
                                         </div>
@@ -329,7 +391,70 @@
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Datos de cursos enviados desde el controlador: [{id, grado, paralelo, ...}, ...]
+    const cursos = @json($cursos);
+
+    function llenarParalelos(gradoSeleccionado, paraleloSelect, valorPreseleccionado = null) {
+        paraleloSelect.innerHTML = '';
+
+        if (!gradoSeleccionado) {
+            paraleloSelect.innerHTML = '<option value="">Seleccione un grado primero</option>';
+            return;
+        }
+
+        const filtrados = cursos.filter(c => c.grado == gradoSeleccionado);
+
+        if (filtrados.length === 0) {
+            paraleloSelect.innerHTML = '<option value="">No hay paralelos para este grado</option>';
+            return;
+        }
+
+        paraleloSelect.innerHTML = '<option value="">Seleccione un paralelo</option>';
+
+        filtrados.forEach(c => {
+            const option = document.createElement('option');
+            option.value = c.id;
+            option.textContent = c.paralelo;
+            if (valorPreseleccionado && c.id == valorPreseleccionado) {
+                option.selected = true;
+            }
+            paraleloSelect.appendChild(option);
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
+
+        // ===== Modal CREAR =====
+        const gradoCrear = document.getElementById('grado_select_crear');
+        const paraleloCrear = document.getElementById('paralelo_select_crear');
+
+        gradoCrear.addEventListener('change', function () {
+            llenarParalelos(this.value, paraleloCrear);
+        });
+
+        // Si vino con old('grado_select') por error de validación, dispara el cambio
+        if (gradoCrear.value) {
+            llenarParalelos(gradoCrear.value, paraleloCrear, '{{ old('id_curso') }}');
+        }
+
+        // ===== Modales EDITAR (uno por estudiante) =====
+        document.querySelectorAll('.grado_select_editar').forEach(function (gradoSelect) {
+            const idEstudiante = gradoSelect.dataset.estudiante;
+            const cursoActual = gradoSelect.dataset.cursoActual;
+            const paraleloSelect = document.querySelector(
+                '.paralelo_select_editar[data-estudiante="' + idEstudiante + '"]'
+            );
+
+            // Llenado inicial con el curso actual preseleccionado
+            if (gradoSelect.value) {
+                llenarParalelos(gradoSelect.value, paraleloSelect, cursoActual);
+            }
+
+            gradoSelect.addEventListener('change', function () {
+                llenarParalelos(this.value, paraleloSelect);
+            });
+        });
+
         // Auto-cerrar alertas después de 5 segundos
         setTimeout(function () {
             document.querySelectorAll('.alert').forEach(function (alert) {

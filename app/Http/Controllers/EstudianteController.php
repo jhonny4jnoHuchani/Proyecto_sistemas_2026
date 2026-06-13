@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Estudiante;
+use App\Models\Inscripcion;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,10 +15,13 @@ class EstudianteController extends Controller
      */
     public function index()
     {
-        
-        $estudiantes = Estudiante::with('user')->get(); // Carga la relación con User
-        
-        return view('estudiantes.index', compact('estudiantes'));
+        $estudiantes = Estudiante::with(['user', 'inscripcionActiva.curso'])->get();
+        $cursos = \App\Models\Curso::where('estado', true)
+            ->orderBy('grado')
+            ->orderBy('paralelo')
+            ->get();
+
+        return view('estudiantes.index', compact('estudiantes', 'cursos'));
     }
 
     /**
@@ -42,6 +46,7 @@ class EstudianteController extends Controller
             'direccion'        => 'nullable|string|max:255',
             'fecha_nacimiento' => 'nullable|date',
             'rude'             => 'nullable|string|max:50|unique:estudiantes,rude',
+            'id_curso'         => 'required|exists:cursos,id',
         ], [
             'nombre.required'      => 'El nombre es obligatorio.',
             'nombre.max'           => 'El nombre no puede tener más de 100 caracteres.',
@@ -56,6 +61,8 @@ class EstudianteController extends Controller
             'fecha_nacimiento.date'=> 'La fecha de nacimiento no es válida.',
             'rude.unique'          => 'Este RUDE ya está registrado.',
             'rude.max'             => 'El RUDE no puede tener más de 50 caracteres.',
+            'id_curso.required'    => 'Debe seleccionar el grado y paralelo.',
+            'id_curso.exists'      => 'El curso seleccionado no es válido.',
         ]);
 
         $user = User::create([
@@ -70,15 +77,23 @@ class EstudianteController extends Controller
             'password'         => Hash::make($request->ci),
         ]);
 
-        Estudiante::create([
+        $estudiante = Estudiante::create([
             'user_id' => $user->id,
             'rude'    => $request->rude,
+        ]);
+
+        // Crear la inscripción del estudiante al curso seleccionado
+        Inscripcion::create([
+            'id_estudiante'     => $estudiante->id,
+            'id_curso'          => $request->id_curso,
+            'id_gestion'        => null,
+            'fecha_inscripcion' => now()->format('Y-m-d'),
+            'estado'            => true,
         ]);
 
         return redirect()->route('estudiantes.listar')
             ->with('success', 'Estudiante creado exitosamente');
     }
-
 
     /**
      * Display the specified resource.
@@ -112,6 +127,7 @@ class EstudianteController extends Controller
             'direccion'        => 'nullable|string|max:255',
             'fecha_nacimiento' => 'nullable|date',
             'rude'             => 'nullable|string|max:50|unique:estudiantes,rude,' . $estudiante->id,
+            'id_curso'         => 'required|exists:cursos,id',
         ], [
             'nombre.required'      => 'El nombre es obligatorio.',
             'nombre.max'           => 'El nombre no puede tener más de 100 caracteres.',
@@ -126,6 +142,8 @@ class EstudianteController extends Controller
             'fecha_nacimiento.date'=> 'La fecha de nacimiento no es válida.',
             'rude.unique'          => 'Este RUDE ya está registrado.',
             'rude.max'             => 'El RUDE no puede tener más de 50 caracteres.',
+            'id_curso.required'    => 'Debe seleccionar el grado y paralelo.',
+            'id_curso.exists'      => 'El curso seleccionado no es válido.',
         ]);
 
         $estudiante->user->update([
@@ -142,9 +160,33 @@ class EstudianteController extends Controller
             'rude' => $request->rude,
         ]);
 
+        // Actualizar o crear la inscripción activa del estudiante
+        $inscripcion = Inscripcion::where('id_estudiante', $estudiante->id)
+            ->where('estado', true)
+            ->latest('id_inscripcion')
+            ->first();
+
+        if ($inscripcion) {
+            // Solo actualiza el curso si cambió
+            if ($inscripcion->id_curso != $request->id_curso) {
+                $inscripcion->update([
+                    'id_curso' => $request->id_curso,
+                ]);
+            }
+        } else {
+            Inscripcion::create([
+                'id_estudiante'     => $estudiante->id,
+                'id_curso'          => $request->id_curso,
+                'id_gestion'        => null,
+                'fecha_inscripcion' => now()->format('Y-m-d'),
+                'estado'            => true,
+            ]);
+        }
+
         return redirect()->route('estudiantes.listar')
             ->with('success', 'Estudiante actualizado exitosamente');
     }
+
     /**
      * Remove the specified resource from storage.
      */

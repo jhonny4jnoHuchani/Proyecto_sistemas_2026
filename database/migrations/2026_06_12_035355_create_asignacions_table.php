@@ -13,12 +13,17 @@ return new class extends Migration
     {
         Schema::create('asignaciones', function (Blueprint $table) {
             $table->id();
-            // Llaves foráneas limpias hacia los catálogos correspondientes
-            $table->foreignId('gestion_id')->constrained('gestiones');
-            $table->foreignId('docente_id')->constrained('docentes');
-            $table->foreignId('materia_id')->constrained('materias');
-            $table->foreignId('curso_id')->constrained('cursos');
-            
+
+            // gestion_id: por ahora no se usa, queda nullable
+            $table->foreignId('gestion_id')->nullable()->constrained('gestiones');
+
+            // docente_id: nullable porque la materia puede asignarse al curso
+            // antes de elegir al docente
+            $table->foreignId('docente_id')->nullable()->constrained('docentes');
+
+            $table->foreignId('materia_id')->nullable()->constrained('materias');
+            $table->foreignId('curso_id')->nullable()->constrained('cursos');
+
             $table->boolean('estado')->default(true); // Control de eliminación lógica
             $table->timestamps();
         });
@@ -29,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('asignacions');
+        Schema::dropIfExists('asignaciones');
     }
 };

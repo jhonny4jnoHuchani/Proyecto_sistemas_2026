@@ -64,8 +64,19 @@ Route::middleware(['auth'])->group(function () {
     Route::post('papelera/asignaciones/{id}/restaurar', [AsignacionController::class, 'restaurar'])->name('asignaciones.restaurar');
     Route::delete('papelera/asignaciones/{id}/forzar-eliminacion', [AsignacionController::class, 'forceDelete'])->name('asignaciones.forceDelete');
 
-    Route::resource('asignaciones', AsignacionController::class);
-    //VISTA PARA ASIGNACIONES (DESIGNACIONES)
-    Route::resource('asignaciones', AsignacionController::class);
+
+
+    Route::prefix('asignaciones')->name('asignaciones.')->group(function () {
+
+        Route::get('/', [AsignacionController::class, 'index'])->name('index');
+
+        Route::get('/grado/{grado}', [AsignacionController::class, 'paralelos'])->name('paralelos');
+        Route::post('/grado/{grado}/asignar', [AsignacionController::class, 'asignarMasivo'])->name('asignarMasivo');
+
+        Route::get('/curso/{curso}', [AsignacionController::class, 'detalle'])->name('detalle');
+        Route::post('/curso/{curso}/docentes', [AsignacionController::class, 'guardarDocentes'])->name('guardarDocentes');
+        Route::post('/curso/{curso}/agregar-materia', [AsignacionController::class, 'agregarMateria'])->name('agregarMateria');
+
+    });
 
 });
