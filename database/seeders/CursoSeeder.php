@@ -9,47 +9,25 @@ class CursoSeeder extends Seeder
 {
     public function run(): void
     {
-        Curso::create([
-            'grado' => 1,           // Cambiado: 'nombre' → 'grado'
-            'paralelo' => 'A',
-            'turno' => 'Mañana',
-            'estado' => true
-        ]);
+        // Configuración: grado => [paralelos], turno
+        $cursos = [
+            1 => ['paralelos' => ['A', 'B', 'C'], 'turno' => 'Mañana'],
+            2 => ['paralelos' => ['A', 'B', 'C'], 'turno' => 'Mañana'],
+            3 => ['paralelos' => ['A', 'B'],      'turno' => 'Tarde'],
+            4 => ['paralelos' => ['A', 'B'],      'turno' => 'Tarde'],
+            5 => ['paralelos' => ['A', 'B'],      'turno' => 'Tarde'],
+            6 => ['paralelos' => ['A', 'B'],      'turno' => 'Tarde'],
+        ];
 
-        Curso::create([
-            'grado' => 2,           // Cambiado: 'nombre' → 'grado'
-            'paralelo' => 'B',
-            'turno' => 'Tarde',
-            'estado' => true
-        ]);
-
-        Curso::create([
-            'grado' => 3,           // Cambiado: 'nombre' → 'grado'
-            'paralelo' => 'C',
-            'turno' => 'Noche',
-            'estado' => false
-        ]);
-
-        Curso::create([
-            'grado' => 4,           // Cambiado: 'nombre' → 'grado'
-            'paralelo' => 'A',
-            'turno' => 'Mañana',
-            'estado' => true
-        ]);
-
-        // Puedes agregar más cursos de ejemplo
-        Curso::create([
-            'grado' => 5,
-            'paralelo' => 'B',
-            'turno' => 'Tarde',
-            'estado' => true
-        ]);
-
-        Curso::create([
-            'grado' => 6,
-            'paralelo' => 'C',
-            'turno' => 'Noche',
-            'estado' => true
-        ]);
+        foreach ($cursos as $grado => $config) {
+            foreach ($config['paralelos'] as $paralelo) {
+                Curso::create([
+                    'grado'    => $grado,
+                    'paralelo' => $paralelo,
+                    'turno'    => $config['turno'],
+                    'estado'   => true,
+                ]);
+            }
+        }
     }
 }

@@ -9,10 +9,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            UserSeeder::class,     // 1° Crear usuarios
-            DocenteSeeder::class,  // 2° Crear docentes (dependen de users)
-            MateriaSeeder::class,  // 3° Crear materias
-            CursoSeeder::class,    // 4° Crear cursos
+            UserSeeder::class,     // primero: crea los 17 users (id 1-17)
+            MateriaSeeder::class,
+            DocenteSeeder::class,  // depende de los user_id del UserSeeder
+            CursoSeeder::class,
         ]);
     }
 }
