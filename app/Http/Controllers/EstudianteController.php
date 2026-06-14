@@ -34,13 +34,13 @@ class EstudianteController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store vía AJAX
      */
-    public function store(Request $request)
+    public function storeAjax(Request $request)
     {
         $gestion_actual = Gestion::where('estado', true)->first();
-        //dd("esta llegando al controlador ",$request->all());
-        $request->validate([
+
+        $validator = \Validator::make($request->all(), [
             'nombre'           => 'required|string|max:100',
             'apellido'         => 'required|string|max:100',
             'ci'               => 'required|string|max:20|unique:estudiantes,ci',
@@ -51,45 +51,50 @@ class EstudianteController extends Controller
             'rude'             => 'nullable|string|max:50|unique:estudiantes,rude',
             'id_curso'         => 'required|exists:cursos,id',
         ], [
-            'nombre.required'      => 'El nombre es obligatorio.',
-            'nombre.max'           => 'El nombre no puede tener más de 100 caracteres.',
-            'apellido.required'    => 'El apellido es obligatorio.',
-            'apellido.max'         => 'El apellido no puede tener más de 100 caracteres.',
-            'ci.required'          => 'El CI es obligatorio.',
-            'ci.unique'            => 'Este CI ya está registrado.',
-            'ci.max'               => 'El CI no puede tener más de 20 caracteres.',
-            'genero.required'      => 'El género es obligatorio.',
-            'genero.in'            => 'El género seleccionado no es válido.',
-            'celular.max'          => 'El celular no puede tener más de 15 dígitos.',
-            'fecha_nacimiento.date'=> 'La fecha de nacimiento no es válida.',
-            'rude.unique'          => 'Este RUDE ya está registrado.',
-            'rude.max'             => 'El RUDE no puede tener más de 50 caracteres.',
-            'id_curso.required'    => 'Debe seleccionar el grado y paralelo.',
-            'id_curso.exists'      => 'El curso seleccionado no es válido.',
+            'nombre.required'       => 'El nombre es obligatorio.',
+            'nombre.max'            => 'El nombre no puede tener más de 100 caracteres.',
+            'apellido.required'     => 'El apellido es obligatorio.',
+            'apellido.max'          => 'El apellido no puede tener más de 100 caracteres.',
+            'ci.required'           => 'El CI es obligatorio.',
+            'ci.unique'             => 'Este CI ya está registrado.',
+            'ci.max'                => 'El CI no puede tener más de 20 caracteres.',
+            'genero.required'       => 'El género es obligatorio.',
+            'genero.in'             => 'El género seleccionado no es válido.',
+            'celular.max'           => 'El celular no puede tener más de 15 dígitos.',
+            'fecha_nacimiento.date' => 'La fecha de nacimiento no es válida.',
+            'rude.unique'           => 'Este RUDE ya está registrado.',
+            'rude.max'              => 'El RUDE no puede tener más de 50 caracteres.',
+            'id_curso.required'     => 'Debe seleccionar el grado y paralelo.',
+            'id_curso.exists'       => 'El curso seleccionado no es válido.',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'ok'     => false,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
 
         $user = User::create([
             'username' => $request->nombre . '_' . $request->ci,
-            'email'            => $request->ci . '@example.com',
-            'password'         => Hash::make($request->ci),
-            'rol'           =>'estudiante',
-            'estado'    =>true,
+            'email'    => $request->ci . '@example.com',
+            'password' => Hash::make($request->ci),
+            'rol'      => 'estudiante',
+            'estado'   => true,
         ]);
 
         $estudiante = Estudiante::create([
-            'user_id' => $user->id,
-            'nombre'   => $request->nombre,
+            'user_id'          => $user->id,
+            'nombre'           => $request->nombre,
             'apellido'         => $request->apellido,
             'ci'               => $request->ci,
-            'rude'    => $request->rude,
+            'rude'             => $request->rude,
             'fecha_nacimiento' => $request->fecha_nacimiento,
             'direccion'        => $request->direccion,
-            'telefono'          => $request->celular,
-            
-            
+            'telefono'         => $request->celular,
+            //'genero'           => $request->genero,
         ]);
 
-        // Crear la inscripción del estudiante al curso seleccionado
         Inscripcion::create([
             'id_estudiante'     => $estudiante->id,
             'id_curso'          => $request->id_curso,
@@ -98,8 +103,45 @@ class EstudianteController extends Controller
             'estado'            => true,
         ]);
 
-        return redirect()->route('estudiantes.listar')
-            ->with('success', 'Estudiante creado exitosamente');
+        return response()->json([
+            'ok'          => true,
+            'estudiante'  => [
+                'id'     => $estudiante->id,
+                'nombre' => $estudiante->nombre . ' ' . $estudiante->apellido,
+            ],
+        ]);
+    }
+
+    /**
+     * Generar PDF de inscripción
+     */
+    public function generarPdf($id)
+    {
+        $estudiante = Estudiante::with([
+            'inscripcionActiva.curso',
+            'inscripcionActiva.gestion',
+        ])->findOrFail($id);
+
+        $inscripcion = $estudiante->inscripcionActiva;
+        $curso       = $inscripcion?->curso;
+
+        // Materias y docentes asignados al curso en la gestión activa
+        $asignaciones = [];
+        if ($curso) {
+            $asignaciones = \App\Models\Asignacion::with(['materia', 'docente'])
+                ->where('curso_id', $curso->id)
+                ->where('estado', true)
+                ->get();
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('estudiantes.pdf', [
+            'estudiante'  => $estudiante,
+            'inscripcion' => $inscripcion,
+            'curso'       => $curso,
+            'asignaciones'=> $asignaciones,
+        ])->setPaper('letter', 'portrait');
+
+        return $pdf->stream('inscripcion_' . $estudiante->ci . '.pdf');
     }
 
     /**

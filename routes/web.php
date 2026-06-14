@@ -16,9 +16,11 @@ Route::get('/', function () {
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/estudiantes/listar', [App\Http\Controllers\EstudianteController::class, 'index'])->name('estudiantes.listar');
-Route::post('/estudiantes/crear', [App\Http\Controllers\EstudianteController::class, 'store'])->name('estudiantes.store');
+Route::post('/estudiantes/crear', [EstudianteController::class, 'storeAjax'])->name('estudiantes.store');
 Route::put('/estudiantes/actualizar/{id}', [EstudianteController::class, 'update'])->name('estudiantes.actualizar');
 Route::delete('/estudiantes/{id}/eliminar', [EstudianteController::class, 'destroy'])->name('estudiantes.eliminar');
+Route::get('/estudiantes/{id}/pdf', [EstudianteController::class, 'generarPdf'])->name('estudiantes.pdf');
+
 
 // PROTEGEMOS EL CRUD DE CURSOS
 // Usamos el middleware 'auth' para que nadie pueda entrar sin iniciar sesión
