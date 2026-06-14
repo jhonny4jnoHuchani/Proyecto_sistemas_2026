@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Estudiante;
 use App\Models\Inscripcion;
 use App\Models\User;
+use App\Models\Gestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -37,11 +38,12 @@ class EstudianteController extends Controller
      */
     public function store(Request $request)
     {
+        $gestion_actual = Gestion::where('estado', true)->first();
         //dd("esta llegando al controlador ",$request->all());
         $request->validate([
             'nombre'           => 'required|string|max:100',
             'apellido'         => 'required|string|max:100',
-            'ci'               => 'required|string|max:20|unique:users,ci',
+            'ci'               => 'required|string|max:20|unique:estudiantes,ci',
             'genero'           => 'required|in:Masculino,Femenino,Otro',
             'celular'          => 'nullable|string|max:15',
             'direccion'        => 'nullable|string|max:255',
@@ -67,27 +69,31 @@ class EstudianteController extends Controller
         ]);
 
         $user = User::create([
-            'name'             => $request->nombre,
-            'apellido'         => $request->apellido,
-            'ci'               => $request->ci,
-            'genero'           => $request->genero,
-            'celular'          => $request->celular,
-            'direccion'        => $request->direccion,
-            'fecha_nacimiento' => $request->fecha_nacimiento,
+            'username' => $request->nombre . '_' . $request->ci,
             'email'            => $request->ci . '@example.com',
             'password'         => Hash::make($request->ci),
+            'rol'           =>'estudiante',
+            'estado'    =>true,
         ]);
 
         $estudiante = Estudiante::create([
             'user_id' => $user->id,
+            'nombre'   => $request->nombre,
+            'apellido'         => $request->apellido,
+            'ci'               => $request->ci,
             'rude'    => $request->rude,
+            'fecha_nacimiento' => $request->fecha_nacimiento,
+            'direccion'        => $request->direccion,
+            'telefono'          => $request->celular,
+            
+            
         ]);
 
         // Crear la inscripción del estudiante al curso seleccionado
         Inscripcion::create([
             'id_estudiante'     => $estudiante->id,
             'id_curso'          => $request->id_curso,
-            'id_gestion'        => null,
+            'id_gestion'        => $gestion_actual->id_gestion,
             'fecha_inscripcion' => now()->format('Y-m-d'),
             'estado'            => true,
         ]);
@@ -122,7 +128,7 @@ class EstudianteController extends Controller
         $request->validate([
             'nombre'           => 'required|string|max:100',
             'apellido'         => 'required|string|max:100',
-            'ci'               => 'required|string|max:20|unique:users,ci,' . $estudiante->user->id,
+            'ci' => 'unique:estudiantes,ci,' . $estudiante->id,
             'genero'           => 'required|in:Masculino,Femenino,Otro',
             'celular'          => 'nullable|string|max:15',
             'direccion'        => 'nullable|string|max:255',
@@ -148,17 +154,19 @@ class EstudianteController extends Controller
         ]);
 
         $estudiante->user->update([
-            'name'             => $request->nombre,
-            'apellido'         => $request->apellido,
-            'ci'               => $request->ci,
-            'genero'           => $request->genero,
-            'celular'          => $request->celular,
-            'direccion'        => $request->direccion,
-            'fecha_nacimiento' => $request->fecha_nacimiento,
+            'username' => $request->nombre . '_' . $request->ci,  // si quieres actualizar username
+            'email'    => $request->ci . '@example.com',          // si quieres actualizar email
         ]);
 
         $estudiante->update([
-            'rude' => $request->rude,
+            'nombre'           => $request->nombre,
+            'apellido'         => $request->apellido,
+            'ci'               => $request->ci,
+            'rude'             => $request->rude,
+            'fecha_nacimiento' => $request->fecha_nacimiento,
+            'direccion'        => $request->direccion,
+            'telefono'         => $request->celular,
+            'genero'           => $request->genero,  // si tienes este campo
         ]);
 
         // Actualizar o crear la inscripción activa del estudiante
@@ -178,7 +186,7 @@ class EstudianteController extends Controller
             Inscripcion::create([
                 'id_estudiante'     => $estudiante->id,
                 'id_curso'          => $request->id_curso,
-                'id_gestion'        => null,
+                'id_gestion' => Gestion::where('estado', true)->first()->id_gestion,
                 'fecha_inscripcion' => now()->format('Y-m-d'),
                 'estado'            => true,
             ]);

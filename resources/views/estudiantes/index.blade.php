@@ -180,12 +180,12 @@
         <tbody>
             @foreach ($estudiantes as $estudiante)
             <tr>
-                <td>{{ $estudiante->user->name ?? 'N/A' }}</td>
-                <td>{{ $estudiante->user->apellido ?? 'N/A' }}</td>
-                <td>{{ $estudiante->user->ci ?? 'N/A' }}</td>
-                <td>{{ $estudiante->user->celular ?? 'N/A' }}</td>
-                <td>{{ $estudiante->user->direccion ?? 'N/A' }}</td>
-                <td>{{ $estudiante->user->fecha_nacimiento ?? 'N/A' }}</td>
+                <td>{{ $estudiante->nombre ?? 'N/A' }}</td>
+                <td>{{ $estudiante->apellido ?? 'N/A' }}</td>
+                <td>{{ $estudiante->ci ?? 'N/A' }}</td>
+                <td>{{ $estudiante->telefono ?? 'N/A' }}</td>
+                <td>{{ $estudiante->direccion ?? 'N/A' }}</td>
+                <td>{{ $estudiante->fecha_nacimiento ? \Carbon\Carbon::parse($estudiante->fecha_nacimiento)->format('d/m/Y') : 'N/A' }}</td>
                 <td>{{ $estudiante->rude ?? 'N/A' }}</td>
                 <td>
                     @if($estudiante->inscripcionActiva && $estudiante->inscripcionActiva->curso)
@@ -227,7 +227,7 @@
                                                 <label class="col-form-label"><i class="fas fa-user"></i> Nombre <span class="text-danger">*</span></label>
                                                 <input type="text" name="nombre"
                                                     class="form-control @error('nombre') is-invalid @enderror"
-                                                    value="{{ old('nombre', $estudiante->user->name ?? '') }}">
+                                                    value="{{ old('nombre', $estudiante->nombre ?? '') }}">
                                                 @error('nombre')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -236,7 +236,7 @@
                                                 <label class="col-form-label"><i class="fas fa-user"></i> Apellido <span class="text-danger">*</span></label>
                                                 <input type="text" name="apellido"
                                                     class="form-control @error('apellido') is-invalid @enderror"
-                                                    value="{{ old('apellido', $estudiante->user->apellido ?? '') }}">
+                                                    value="{{ old('apellido', $estudiante->apellido ?? '') }}">
                                                 @error('apellido')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -247,7 +247,7 @@
                                                 <label class="col-form-label"><i class="fas fa-id-card"></i> CI <span class="text-danger">*</span></label>
                                                 <input type="text" name="ci"
                                                     class="form-control @error('ci') is-invalid @enderror"
-                                                    value="{{ old('ci', $estudiante->user->ci ?? '') }}">
+                                                    value="{{ old('ci', $estudiante->ci ?? '') }}">
                                                 @error('ci')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -265,7 +265,7 @@
                                                 <label class="col-form-label"><i class="fas fa-phone"></i> Celular</label>
                                                 <input type="tel" name="celular"
                                                     class="form-control @error('celular') is-invalid @enderror"
-                                                    value="{{ old('celular', $estudiante->user->celular ?? '') }}" pattern="[0-9]{8}">
+                                                    value="{{ old('celular', $estudiante->telefono ?? '') }}" pattern="[0-9]{8}">
                                                 @error('celular')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -277,9 +277,9 @@
                                                 <label class="col-form-label"><i class="fas fa-venus-mars"></i> Género <span class="text-danger">*</span></label>
                                                 <select name="genero" class="form-select @error('genero') is-invalid @enderror">
                                                     <option value="">Seleccione género</option>
-                                                    <option value="Masculino" {{ old('genero', $estudiante->user->genero ?? '') == 'Masculino' ? 'selected' : '' }}>Masculino</option>
-                                                    <option value="Femenino"  {{ old('genero', $estudiante->user->genero ?? '') == 'Femenino'  ? 'selected' : '' }}>Femenino</option>
-                                                    <option value="Otro"      {{ old('genero', $estudiante->user->genero ?? '') == 'Otro'      ? 'selected' : '' }}>Otro</option>
+                                                    <option value="Masculino" {{ old('genero', $estudiante->genero ?? '') == 'Masculino' ? 'selected' : '' }}>Masculino</option>
+                                                    <option value="Femenino"  {{ old('genero', $estudiante->genero ?? '') == 'Femenino'  ? 'selected' : '' }}>Femenino</option>
+                                                    <option value="Otro"      {{ old('genero', $estudiante->genero ?? '') == 'Otro'      ? 'selected' : '' }}>Otro</option>
                                                 </select>
                                                 @error('genero')
                                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -289,7 +289,7 @@
                                                 <label class="col-form-label"><i class="fas fa-calendar-alt"></i> Fecha de Nacimiento</label>
                                                 <input type="date" name="fecha_nacimiento"
                                                     class="form-control @error('fecha_nacimiento') is-invalid @enderror"
-                                                    value="{{ old('fecha_nacimiento', $estudiante->user->fecha_nacimiento ?? '') }}">
+                                                    value="{{ old('fecha_nacimiento', $estudiante->fecha_nacimiento ?? '') }}">
                                                 @error('fecha_nacimiento')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -298,7 +298,7 @@
                                         <div class="mb-3">
                                             <label class="col-form-label"><i class="fas fa-map-marker-alt"></i> Dirección</label>
                                             <textarea name="direccion" rows="2"
-                                                class="form-control @error('direccion') is-invalid @enderror">{{ old('direccion', $estudiante->user->direccion ?? '') }}</textarea>
+                                                class="form-control @error('direccion') is-invalid @enderror">{{ old('direccion', $estudiante->direccion ?? '') }}</textarea>
                                             @error('direccion')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror

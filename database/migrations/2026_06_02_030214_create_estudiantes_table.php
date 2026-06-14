@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('ci',20)->unique();
             $table->string('rude',50)->unique();
             $table->date('fecha_nacimiento');
-
+            $table->string('direccion')->nullable();
             $table->string('telefono',20)->nullable();
 
             $table->boolean('estado')->default(true);

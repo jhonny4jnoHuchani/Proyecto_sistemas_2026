@@ -17,6 +17,7 @@ class Estudiante extends Model
         'ci',
         'rude', 
         'fecha_nacimiento',
+        'direccion',
         'telefono',
         'estado'
     ];
