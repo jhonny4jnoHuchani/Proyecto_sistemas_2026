@@ -3,63 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Trimestre;
+use App\Models\Gestion;
 use Illuminate\Http\Request;
 
 class TrimestreController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        // Buscamos la gestión que esté activa actualmente
+        $gestionActiva = Gestion::where('estado', true)->first();
+
+        // Si hay una gestión activa, traemos sus trimestres. Si no, devolvemos un arreglo vacío.
+        $trimestres = [];
+        if ($gestionActiva) {
+            $trimestres = Trimestre::where('gestion_id', $gestionActiva->id)->get();
+        }
+
+        return view('trimestres.index', compact('gestionActiva', 'trimestres'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // Método AJAX para cambiar el estado (abrir/cerrar carga de notas)
+    public function toggle(Request $request, $id)
     {
-        //
-    }
+        $trimestre = Trimestre::findOrFail($id);
+        
+        // Invertimos el estado (si es true pasa a false, y viceversa)
+        $trimestre->estado = !$trimestre->estado;
+        $trimestre->save();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Trimestre $trimestre)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Trimestre $trimestre)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Trimestre $trimestre)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Trimestre $trimestre)
-    {
-        //
+        return response()->json([
+            'success' => true,
+            'nuevo_estado' => $trimestre->estado,
+            'mensaje' => $trimestre->estado ? 'Trimestre habilitado para notas.' : 'Trimestre cerrado.'
+        ]);
     }
 }

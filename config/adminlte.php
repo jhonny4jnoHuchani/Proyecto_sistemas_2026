@@ -342,7 +342,7 @@ return [
         ],
         [
             'text' => 'Trimestres',
-            'route'  => '',
+            'route'  => 'trimestres.index',
             'icon' => 'fas fa-calendar-alt',
         ],
         [

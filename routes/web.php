@@ -115,4 +115,11 @@ Route::middleware(['auth'])->group(function () {
     // CRUD Administrativos
     Route::resource('administrativos', AdministrativoController::class);
 
+    // Ruta para el interruptor AJAX de Trimestres
+    Route::post('trimestres/{id}/toggle', [App\Http\Controllers\TrimestreController::class, 'toggle'])->name('trimestres.toggle');
+    
+    Route::resource('trimestres', App\Http\Controllers\TrimestreController::class);
+
+    // Ruta para activar una gestión académica
+    Route::post('gestiones/{id}/activar', [App\Http\Controllers\GestionController::class, 'activar'])->name('gestiones.activar');
 });

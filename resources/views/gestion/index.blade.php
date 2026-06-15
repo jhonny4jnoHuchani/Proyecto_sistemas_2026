@@ -65,6 +65,19 @@
                                 @endif
                             </td>
                             <td>
+                                @if(!$gestion->estado)
+                                    <form action="{{ route('gestiones.activar', $gestion->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de activar esta gestión? Las demás gestiones y sus trimestres se cerrarán automáticamente.');">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-success mr-1" title="Convertir en Gestión Actual">
+                                            <i class="fas fa-check-circle"></i> Activar
+                                        </button>
+                                    </form>
+                                @else
+                                    <span class="badge badge-success px-2 py-2 mr-1" title="Gestión Activa Actualmente">
+                                        <i class="fas fa-star text-warning"></i> Activa
+                                    </span>
+                                @endif
+
                                 <button class="btn btn-sm btn-warning btn-edit"
                                     data-toggle="modal"
                                     data-target="#modal-edit"

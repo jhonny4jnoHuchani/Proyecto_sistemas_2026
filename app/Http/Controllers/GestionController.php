@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Gestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use App\Models\Trimestre;
 
 class GestionController extends Controller
 {
@@ -77,5 +79,34 @@ class GestionController extends Controller
 
         return redirect()->route('gestiones.index')
                          ->with('success', 'Gestión ' . $gestion->anio . ' actualizada correctamente.');
+    }
+
+    public function activar($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            // 1. Apagamos TODAS las gestiones actuales
+            $gestiones = \App\Models\Gestion::all();
+            foreach($gestiones as $g) {
+                $g->estado = false;
+                $g->save();
+                
+                // Cumplimos la regla de tu compañero: Desactivar trimestres de raíz
+                Trimestre::where('gestion_id', $g->id)->update(['estado' => false]);
+            }
+
+            // 2. Encendemos SOLO la gestión seleccionada
+            $gestionNueva = \App\Models\Gestion::findOrFail($id);
+            $gestionNueva->estado = true;
+            $gestionNueva->save();
+
+            DB::commit();
+            return redirect()->route('gestiones.index')->with('success', 'La gestión ' . $gestionNueva->anio . ' ahora es la gestión activa del sistema.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Hubo un problema al cambiar la gestión: ' . $e->getMessage());
+        }
     }
 }
