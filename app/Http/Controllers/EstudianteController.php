@@ -98,7 +98,7 @@ class EstudianteController extends Controller
         Inscripcion::create([
             'id_estudiante'     => $estudiante->id,
             'id_curso'          => $request->id_curso,
-            'id_gestion'        => $gestion_actual->id_gestion,
+            'id_gestion'        => $gestion_actual->id,
             'fecha_inscripcion' => now()->format('Y-m-d'),
             'estado'            => true,
         ]);
@@ -228,7 +228,7 @@ class EstudianteController extends Controller
             Inscripcion::create([
                 'id_estudiante'     => $estudiante->id,
                 'id_curso'          => $request->id_curso,
-                'id_gestion' => Gestion::where('estado', true)->first()->id_gestion,
+                'id_gestion' => Gestion::where('estado', true)->first()->id,
                 'fecha_inscripcion' => now()->format('Y-m-d'),
                 'estado'            => true,
             ]);

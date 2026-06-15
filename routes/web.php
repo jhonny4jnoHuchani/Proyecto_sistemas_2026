@@ -8,6 +8,7 @@ use App\Http\Controllers\GestionController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\AsignacionController;
 use App\Http\Controllers\TrimestreController;
+use App\Http\Controllers\NotaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -79,6 +80,30 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/curso/{curso}/docentes', [AsignacionController::class, 'guardarDocentes'])->name('guardarDocentes');
         Route::post('/curso/{curso}/agregar-materia', [AsignacionController::class, 'agregarMateria'])->name('agregarMateria');
 
+    });
+    
+    Route::prefix('notas')->name('notas.')->middleware(['auth'])->group(function () {
+    
+        // Vista 1 — Lista de cursos
+        Route::get('/', [NotaController::class, 'index'])
+            ->name('index');
+    
+        // Vista 2 — Materias de un curso
+        Route::get('/{curso}/materias', [NotaController::class, 'materias'])
+            ->name('materias');
+    
+        // Vista 3 — Trimestres de una asignación
+        Route::get('/{curso}/materias/{asignacion}/trimestres', [NotaController::class, 'trimestres'])
+            ->name('trimestres');
+    
+        // Vista 4 — Tabla de carga de notas
+        Route::get('/{curso}/materias/{asignacion}/trimestres/{trimestre}', [NotaController::class, 'cargar'])
+            ->name('cargar');
+    
+        // AJAX — Autoguardado de nota individual (sin recarga de página)
+        Route::post('/guardar', [NotaController::class, 'guardar'])
+            ->name('guardar');
+    
     });
 
 });

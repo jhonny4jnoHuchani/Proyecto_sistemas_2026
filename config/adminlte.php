@@ -346,7 +346,7 @@ return [
             'submenu' => [
                 [
                     'text' => 'notas',
-                    'url' => 'notas/listar',
+                    'url' => 'notas',
                 ],
                 [
                     'text' => 'materias',
