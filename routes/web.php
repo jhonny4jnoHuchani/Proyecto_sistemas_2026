@@ -9,6 +9,7 @@ use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\AsignacionController;
 use App\Http\Controllers\TrimestreController;
 use App\Http\Controllers\NotaController;
+use App\Http\Controllers\AdministrativoController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -105,5 +106,13 @@ Route::middleware(['auth'])->group(function () {
             ->name('guardar');
     
     });
+
+    // Papelera Administrativos
+    Route::get('papelera/administrativos', [AdministrativoController::class, 'inactivos'])->name('administrativos.inactivos');
+    Route::post('papelera/administrativos/{id}/restaurar', [AdministrativoController::class, 'restaurar'])->name('administrativos.restaurar');
+    Route::delete('papelera/administrativos/{id}/forzar-eliminacion', [AdministrativoController::class, 'forceDelete'])->name('administrativos.forceDelete');
+
+    // CRUD Administrativos
+    Route::resource('administrativos', AdministrativoController::class);
 
 });

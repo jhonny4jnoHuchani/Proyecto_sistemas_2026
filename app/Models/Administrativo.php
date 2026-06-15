@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
 
 class Administrativo extends Model
 {
-    protected $table = 'administrativos';
+    use HasFactory;
 
     protected $fillable = [
         'user_id',
@@ -18,13 +17,10 @@ class Administrativo extends Model
         'cargo',
         'estado'
     ];
-    protected function casts(): array
-    {
-        return ['estado' => 'boolean'];
-    }
 
-    public function user(): BelongsTo
+    // Relación: Un administrativo pertenece a una cuenta de usuario
+    public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 }

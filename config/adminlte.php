@@ -320,6 +320,11 @@ return [
             'icon' => 'fas fa-fw fa-user',
         ],
         [
+            'text' => 'Administrativos',
+            'route'  => 'administrativos.index',
+            'icon' => 'fas fa-fw fa-user-tie', 
+        ],
+        [
             'text' => 'Cursos',
             'icon' => 'fas fa-fw fa-lock',
             'url'=>'cursos',

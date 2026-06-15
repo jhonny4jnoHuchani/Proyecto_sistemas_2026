@@ -39,5 +39,13 @@ class UserSeeder extends Seeder
                 'estado'   => true,
             ]);
         }
+
+        User::create([
+                'username' => 'admin',
+                'email'    => 'admin@colegio',
+                'password' => Hash::make('password123'),
+                'rol'      => 'admin',
+                'estado'   => true,
+        ]);
     }
 }
