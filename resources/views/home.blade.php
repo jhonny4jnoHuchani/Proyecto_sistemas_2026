@@ -44,14 +44,17 @@
             <div class="small-box bg-info">
                 <div class="inner">
                     <h3>Trimestres</h3>
-                    <p>Periodos de Evaluación</p>
+                    <p>Control de Periodos y Notas</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-calendar-alt"></i>
                 </div>
-                
+                <a href="{{ route('trimestres.index') }}" class="small-box-footer">
+                    Configurar Fechas <i class="fas fa-arrow-circle-right"></i>
+                </a>
             </div>
         </div>
+
 
         <!-- Card de Docentes -->
         <div class="col-lg-3 col-6">
@@ -83,6 +86,14 @@
             </div>
         </div>
     </div>
+    <a href="#" class="btn btn-danger"
+        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        <i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión
+    </a>
+
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
 
     {{-- Modal advertencia gestión --}}
     @if (!$gestionActiva)
