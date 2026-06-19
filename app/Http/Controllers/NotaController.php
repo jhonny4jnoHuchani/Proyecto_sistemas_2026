@@ -9,6 +9,7 @@ use App\Models\Inscripcion;
 use App\Models\Nota;
 use App\Models\Trimestre;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class NotaController extends Controller
 {
@@ -130,5 +131,35 @@ class NotaController extends Controller
             'id_nota'    => $nota->id_nota,
             'nota_final' => $nota->nota_final,
         ]);
+    }
+
+
+    
+    public function generarPdf(Curso $curso, Asignacion $asignacion, Trimestre $trimestre)
+    {
+        $gestion = Gestion::where('estado', true)->firstOrFail();
+
+        abort_if(
+            $asignacion->curso_id != $curso->id,
+            403,
+            'Asignación no válida para este curso.'
+        );
+
+        $inscripciones = Inscripcion::where('id_curso', $curso->id)
+            ->where('id_gestion', $gestion->id)
+            ->where('estado', true)
+            ->with('estudiante')
+            ->get()
+            ->sortBy(fn($i) => $i->estudiante->apellido);
+
+        $notasExistentes = Nota::where('id_asignacion', $asignacion->id)
+            ->where('id_trimestre', $trimestre->id)
+            ->pluck('nota_final', 'id_inscripcion');
+
+        $pdf = Pdf::loadView('notas.pdf', compact(
+            'gestion', 'curso', 'asignacion', 'trimestre', 'inscripciones', 'notasExistentes'
+        ))->setPaper('letter', 'portrait');
+
+        return $pdf->stream('Planilla_' . $curso->grado . '_' . $curso->paralelo . '_' . $asignacion->materia->nombre . '.pdf');
     }
 }

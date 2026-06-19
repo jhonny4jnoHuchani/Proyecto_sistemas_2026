@@ -122,4 +122,5 @@ Route::middleware(['auth'])->group(function () {
 
     // Ruta para activar una gestión académica
     Route::post('gestiones/{id}/activar', [App\Http\Controllers\GestionController::class, 'activar'])->name('gestiones.activar');
+    Route::get('notas/{curso}/{asignacion}/{trimestre}/pdf', [App\Http\Controllers\NotaController::class, 'generarPdf'])->name('notas.pdf');
 });

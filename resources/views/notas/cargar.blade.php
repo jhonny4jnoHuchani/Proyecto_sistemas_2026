@@ -100,9 +100,13 @@
             </table>
         </div>
 
-        <div class="card-footer text-right">
+        <div class="card-footer d-flex justify-content-between">
             <a href="{{ route('notas.index') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-home mr-1"></i> Volver a cursos
+            </a>
+            
+            <a href="{{ route('notas.pdf', [$curso, $asignacion, $trimestre]) }}" target="_blank" class="btn btn-danger">
+                <i class="fas fa-file-pdf mr-1"></i> Exportar Planilla PDF
             </a>
         </div>
     </div>
