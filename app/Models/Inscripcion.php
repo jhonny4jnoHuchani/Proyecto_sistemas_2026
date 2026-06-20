@@ -41,4 +41,8 @@ class Inscripcion extends Model
     {
         return $this->belongsTo(Gestion::class, 'id_gestion');
     }
+    public function notas()
+    {
+        return $this->hasMany(Nota::class, 'id_inscripcion', 'id_inscripcion');
+    }
 }

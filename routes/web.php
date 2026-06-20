@@ -123,4 +123,7 @@ Route::middleware(['auth'])->group(function () {
     // Ruta para activar una gestión académica
     Route::post('gestiones/{id}/activar', [App\Http\Controllers\GestionController::class, 'activar'])->name('gestiones.activar');
     Route::get('notas/{curso}/{asignacion}/{trimestre}/pdf', [App\Http\Controllers\NotaController::class, 'generarPdf'])->name('notas.pdf');
+    // Panel del Estudiante
+    Route::get('/mi-panel', [App\Http\Controllers\EstudiantePanelController::class, 'dashboard'])->name('estudiante.dashboard');
+    Route::get('/mis-notas', [App\Http\Controllers\EstudiantePanelController::class, 'misNotas'])->name('estudiante.notas');
 });

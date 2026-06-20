@@ -345,6 +345,20 @@ return [
             'route'  => 'trimestres.index',
             'icon' => 'fas fa-calendar-alt',
         ],
+        ['header' => 'PANEL DEL ESTUDIANTE'],
+        [
+            'text'  => 'Mi Panel',
+            'route' => 'estudiante.dashboard',
+            'icon'  => 'fas fa-fw fa-home',
+            'classes' => 'text-info',
+        ],
+        [
+            'text'  => 'Mis Notas',
+            'route' => 'estudiante.notas',
+            'icon'  => 'fas fa-fw fa-user-graduate',
+            'classes' => 'text-info', // Le da un color azulito al texto para resaltarlo
+        ],
+
         [
             'text' => 'gestion academica',
             'icon' => 'fas fa-fw fa-share',
