@@ -54,6 +54,28 @@ class User extends Authenticatable
     {
         return $this->hasOne(Estudiante::class);
     }
+// AdminLTE: Avatar (usamos gravatar o icono por defecto)
+    public function adminlte_image()
+    {
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->username) . '&background=003399&color=ffd700&size=128';
+    }
 
+    // AdminLTE: Descripción (rol)
+    public function adminlte_desc()
+    {
+        $roles = [
+            'admin' => 'Administrador',
+            'secretaria' => 'Secretaria',
+            'docente' => 'Docente',
+            'estudiante' => 'Estudiante',
+        ];
+        return $roles[$this->rol] ?? $this->rol;
+    }
+
+    // AdminLTE: URL del perfil
+    public function adminlte_profile_url()
+    {
+        return '#'; // Cambiar cuando tengas ruta de perfil
+    }
     
 }

@@ -14,30 +14,30 @@ class AdministradorSeeder extends Seeder
     {
         $admins = [
             [
-                'username' => 'admin1',
-                'email'    => 'admin1@colegio.com',
-                'password' => 'password123', // se hashea solo gracias al cast 'hashed' del modelo User
+                'username' => 'Anahi_Alave',
+                'email'    => 'anahi_alave@sistema.com',
+                'password' => 'anahi_alave@sistema.com',
                 'rol'      => 'admin',
                 'estado'   => 1,
             ],
             [
-                'username' => 'admin2',
-                'email'    => 'admin2@colegio.com',
-                'password' => 'password123',
+                'username' => 'David_Lecoña',
+                'email'    => 'david_lecoña@sistema.com',
+                'password' => 'david_lecoña@sistema.com',
                 'rol'      => 'admin',
                 'estado'   => 1,
             ],
             [
-                'username' => 'admin3',
-                'email'    => 'admin3@colegio.com',
-                'password' => 'password123',
+                'username' => 'Cristian_Mayta',
+                'email'    => 'cristian_mayta@sistema.com',
+                'password' => 'cristian_mayta@sistema.com',
                 'rol'      => 'admin',
                 'estado'   => 1,
             ],
             [
-                'username' => 'admin4',
-                'email'    => 'admin4@colegio.com',
-                'password' => 'password123',
+                'username' => 'Jhonny_',
+                'email'    => 'hynoku2004r@gmail.com',
+                'password' => 'hynoku2004r@gmail.com',
                 'rol'      => 'admin',
                 'estado'   => 1,
             ],
@@ -45,7 +45,7 @@ class AdministradorSeeder extends Seeder
 
         foreach ($admins as $admin) {
             User::updateOrCreate(
-                ['email' => $admin['email']], // evita duplicados si vuelves a correr el seeder
+                ['email' => $admin['email']],
                 $admin
             );
         }

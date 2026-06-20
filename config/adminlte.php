@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'academia',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
+    'logo' => '<b>Ca</b>demia',
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -114,10 +114,10 @@ return [
         'mode' => 'fullscreen',
         'img' => [
             'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-            'alt' => 'AdminLTE Preloader Image',
+            'alt' => 'Cargando',
             'effect' => 'animation__shake',
-            'width' => 60,
-            'height' => 60,
+            'width' => 80,
+            'height' => 80,
         ],
     ],
 
@@ -134,10 +134,10 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
+    'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
-    'usermenu_desc' => false,
+    'usermenu_image' => true,
+    'usermenu_desc' => true,
     'usermenu_profile_url' => false,
 
     /*
@@ -299,98 +299,80 @@ return [
     */
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////77
 //AQUI VAMOS A TRABAJAR NOSOTROS 
-    'menu' => [
-        // Navbar items:
-
+    'menu' => array_filter([
         [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
 
-        // Sidebar items:
-        ['header' => 'Gestion de usuarios'],
-        [
+        // ADMIN
+        menuPorRol('admin', ['header' => 'ADMINISTRACIÓN']),
+        menuPorRol('admin', [
+            'text' => 'Gestiones',
+            'route' => 'gestiones.index',
+            'icon' => 'fas fa-calendar-alt',
+        ]),
+        menuPorRol('admin', [
+            'text' => 'Administrativos',
+            'route' => 'administrativos.index',
+            'icon' => 'fas fa-user-tie',
+        ]),
+
+        // ADMIN + SECRETARIA
+        menuPorRol(['admin', 'secretaria'], ['header' => 'GESTIÓN DE USUARIOS']),
+        menuPorRol(['admin', 'secretaria'], [
             'text' => 'Estudiantes',
             'url' => 'estudiantes/listar',
-            'icon' => 'far fa-fw fa-file',
-        ],
-        [
+            'icon' => 'fas fa-user-graduate',
+        ]),
+        menuPorRol(['admin', 'secretaria'], [
             'text' => 'Docentes',
-            'url' => 'docentes',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'Administrativos',
-            'route'  => 'administrativos.index',
-            'icon' => 'fas fa-fw fa-user-tie', 
-        ],
-        [
+            'route' => 'docentes.index',
+            'icon' => 'fas fa-chalkboard-teacher',
+        ]),
+        menuPorRol(['admin', 'secretaria'], [
             'text' => 'Cursos',
-            'icon' => 'fas fa-fw fa-lock',
-            'url'=>'cursos',
-            'active'=>['cursos*'],
-        ],
-        [
-            'text'=>'Materias',
-            'route'=>'materias.index',
-            'icon'=>'fas fa-book',
-        ],
-        [
-            'text'=>'Designaciones',
-            'route'=>'asignaciones.index',
-            'icon'=>'fas fa-chalkboard-teacher',
-        ],
-        [
+            'url' => 'cursos',
+            'icon' => 'fas fa-school',
+            'active' => ['cursos*'],
+        ]),
+        menuPorRol(['admin', 'secretaria'], [
+            'text' => 'Materias',
+            'route' => 'materias.index',
+            'icon' => 'fas fa-book',
+        ]),
+        menuPorRol(['admin', 'secretaria'], [
+            'text' => 'Asignaciones',
+            'route' => 'asignaciones.index',
+            'icon' => 'fas fa-clipboard-list',
+        ]),
+        menuPorRol(['admin', 'secretaria'], [
             'text' => 'Trimestres',
-            'route'  => 'trimestres.index',
-            'icon' => 'fas fa-calendar-alt',
-        ],
-        ['header' => 'PANEL DEL ESTUDIANTE'],
-        [
-            'text'  => 'Mi Panel',
+            'route' => 'trimestres.index',
+            'icon' => 'fas fa-calendar-check',
+        ]),
+
+        // ADMIN + DOCENTE
+        menuPorRol(['admin', 'docente'], ['header' => 'NOTAS']),
+        menuPorRol(['admin', 'docente'], [
+            'text' => 'Cargar Notas',
+            'route' => 'notas.index',
+            'icon' => 'fas fa-star',
+        ]),
+
+        // ESTUDIANTE
+        menuPorRol('estudiante', ['header' => 'MI PANEL']),
+        menuPorRol('estudiante', [
+            'text' => 'Mi Panel',
             'route' => 'estudiante.dashboard',
-            'icon'  => 'fas fa-fw fa-home',
-            'classes' => 'text-info',
-        ],
-        [
-            'text'  => 'Mis Notas',
+            'icon' => 'fas fa-tachometer-alt',
+        ]),
+        menuPorRol('estudiante', [
+            'text' => 'Mis Notas',
             'route' => 'estudiante.notas',
-            'icon'  => 'fas fa-fw fa-user-graduate',
-            'classes' => 'text-info', // Le da un color azulito al texto para resaltarlo
-        ],
-
-        [
-            'text' => 'gestion academica',
-            'icon' => 'fas fa-fw fa-share',
-            'submenu' => [
-                [
-                    'text' => 'notas',
-                    'url' => 'notas',
-                ],
-                [
-                    'text' => 'materias',
-                    'url' => 'materias/listar',
-                ],
-            ],
-        ],
-        ['header' => 'labels'],
-        [
-            'text' => 'GESTIONES',
-            'icon_color' => 'red',
-            'url' => 'gestiones',
-        ],
-        [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
-        ],
-        [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
-        ],
-    ],
-
+            'icon' => 'fas fa-star',
+        ]),
+    ]),
     /*
     |--------------------------------------------------------------------------
     | Menu Filters
@@ -404,6 +386,7 @@ return [
     */
 
     'filters' => [
+        App\Filters\SimpleRoleFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter::class,
