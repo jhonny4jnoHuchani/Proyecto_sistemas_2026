@@ -20,6 +20,11 @@
                 </h3>
                 <div class="card-tools">
                     <span class="badge badge-info text-md">Gestión {{ $inscripcion->gestion->anio }}</span>
+                    
+                    {{-- BOTÓN PDF --}}
+                    <a href="{{ route('estudiante.notas.pdf') }}" target="_blank" class="btn btn-primary">
+                        Ver boletín en PDF
+                    </a>
                 </div>
             </div>
             

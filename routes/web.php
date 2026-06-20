@@ -126,4 +126,6 @@ Route::middleware(['auth'])->group(function () {
     // Panel del Estudiante
     Route::get('/mi-panel', [App\Http\Controllers\EstudiantePanelController::class, 'dashboard'])->name('estudiante.dashboard');
     Route::get('/mis-notas', [App\Http\Controllers\EstudiantePanelController::class, 'misNotas'])->name('estudiante.notas');
+    Route::get('/mis-notas/pdf', [App\Http\Controllers\EstudiantePanelController::class, 'generarPDF'])->name('estudiante.notas.pdf');
+
 });

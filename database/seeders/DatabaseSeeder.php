@@ -15,6 +15,9 @@ class DatabaseSeeder extends Seeder
             MateriaSeeder::class,
             DocenteSeeder::class,  // depende de los user_id del UserSeeder
             CursoSeeder::class,
+            //añadir el seeder para ejecutar un solo comando
+            EstudiantePruebaSeeder::class,
+            AdministradorSeeder::class,
         ]);
     }
 }
